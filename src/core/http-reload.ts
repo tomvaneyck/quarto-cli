@@ -29,6 +29,27 @@ export function httpReloader(port: number): HttpReloader {
   }
   const clients: Client[] = [];
 
+  // periodically ping clients and exit if we have no clients
+  // for more than 5 seconds
+  let lastClientsActive = 1;
+  setInterval(async () => {
+    const sockets = clients.map((client) => client.socket);
+    let clientsActive = 0;
+    for (let i = 0; i < sockets.length; i++) {
+      try {
+        await sockets[i].ping();
+        clientsActive++;
+      } catch {
+        //
+      }
+    }
+    if (clientsActive === 0 && lastClientsActive === 0) {
+      Deno.exit();
+    } else {
+      lastClientsActive = clientsActive;
+    }
+  }, 5000);
+
   return {
     handle: (req: ServerRequest) => {
       return req.headers.get("upgrade") === "websocket";
