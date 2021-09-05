@@ -12,7 +12,7 @@ import { basename, dirname, join, relative } from "path/mod.ts";
 import { serve, ServerRequest } from "http/server.ts";
 
 import { ld } from "lodash/mod.ts";
-import { DOMParser } from "deno_dom/deno-dom-wasm.ts";
+import { DOMParser } from "deno_dom/deno-dom-native.ts";
 
 import { openUrl } from "../../core/shell.ts";
 import { isHtmlContent } from "../../core/mime.ts";

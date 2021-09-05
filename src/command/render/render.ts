@@ -18,7 +18,7 @@ import {
 
 import { ld } from "lodash/mod.ts";
 
-import { Document, DOMParser } from "deno_dom/deno-dom-wasm.ts";
+import { Document, DOMParser } from "deno_dom/deno-dom-native.ts";
 
 import { info } from "log/mod.ts";
 

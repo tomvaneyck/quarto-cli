@@ -7,7 +7,7 @@
 
 import { generate as generateUuid } from "uuid/v4.ts";
 
-import { Document, Element } from "deno_dom/deno-dom-wasm.ts";
+import { Document, Element } from "deno_dom/deno-dom-native.ts";
 
 import { pandocAutoIdentifier } from "./pandoc/pandoc-id.ts";
 import { isFileRef } from "./http.ts";
