@@ -5,6 +5,8 @@
 *
 */
 
+import blueimpMd5 from "blueimpMd5";
+
 export function md5Hash(content: string) {
-  return content;
+  return blueimpMd5(content);
 }
