@@ -14,7 +14,6 @@ import {
   relative,
 } from "path/mod.ts";
 import { ensureDirSync, existsSync } from "fs/mod.ts";
-import { createHash } from "hash/mod.ts";
 
 import { ld } from "lodash/mod.ts";
 
@@ -36,6 +35,7 @@ import { ExecuteResult } from "../../execute/types.ts";
 
 import { kProjectLibDir, ProjectContext } from "../../project/types.ts";
 import { projectScratchPath } from "../../project/project-scratch.ts";
+import { md5Hash } from "../../core/hash.ts";
 
 export const kProjectFreezeDir = "_freeze";
 export const kOldFreezeExecuteResults = "execute";
@@ -270,7 +270,7 @@ export function removeFreezeResults(filesDir: string) {
 }
 
 function freezeInputHash(input: string) {
-  return createHash("md5").update(Deno.readTextFileSync(input)).toString();
+  return md5Hash(Deno.readTextFileSync(input));
 }
 
 // don't use _files suffix in freezer
