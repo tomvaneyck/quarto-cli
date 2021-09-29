@@ -39,9 +39,9 @@ export async function ensureGitignore(
       return false;
     }
   } else if (forceEnv) {
-    await createGitignore(dir, forceEnv);
+    createGitignore(dir, forceEnv);
     return true;
-  } else if (which("git")) {
+  } else if (await which("git")) {
     // if it doesn't exist then auto-create if we are in a git project or we had the force flag
     const result = await execProcess({
       cmd: ["git", "status"],

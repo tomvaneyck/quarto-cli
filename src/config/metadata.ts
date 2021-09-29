@@ -7,7 +7,7 @@
 
 import { ld } from "lodash/mod.ts";
 
-import { exists } from "fs/exists.ts";
+import { existsSync } from "fs/exists.ts";
 import { join } from "path/mod.ts";
 import { error } from "log/mod.ts";
 
@@ -49,7 +49,7 @@ export function includedMetadata(
 
   // Read the yaml
   const filesMetadata = yamlFiles.map((yamlFile) => {
-    if (exists(yamlFile)) {
+    if (existsSync(yamlFile)) {
       try {
         return readYaml(yamlFile);
       } catch (e) {
