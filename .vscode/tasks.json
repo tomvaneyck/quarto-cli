@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Deno Bundle Watch",
+      "group": "build",      
+      "type": "deno",
+      "command": "bundle",
+      "args": [
+        "--watch",
+        "--unstable",
+        "--importmap=src/import_map.json",
+        "src/quarto.ts",
+        "${env:TMPDIR}'quarto.js"
+      ],
+      "isBackground": true,
+      "problemMatcher": {
+        "base": "$deno",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^Watcher File change detected! Restarting!",
+          "endsPattern": "^Watcher Bundle (?:finished|failed)\\. Restarting on file change\\.\\.\\."
+        }
+      },
+      "runOptions": {
+        "runOn": "folderOpen",
+      }
+    }
+  ]
+}
