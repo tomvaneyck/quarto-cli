@@ -158,7 +158,6 @@ knitr_hooks <- function(format, resourceDir) {
     # read some options
     label <- output_label(options)
     fig.cap <- options[["fig.cap"]]
-    tbl.cap <- options[["tbl-cap"]]
     cell.cap <- NULL
     fig.subcap = options[["fig.subcap"]]
     
@@ -180,11 +179,7 @@ knitr_hooks <- function(format, resourceDir) {
       } else {
         label = NULL
       }
-    } else if (is_table_label(label)) {
-      if (!is.null(tbl.cap)) {
-        cell.cap <- paste0("\n", tbl.cap, "\n")
-      }
-    } else {
+    } else if (!is_table_label(label)) {
       label <- NULL
     }
 

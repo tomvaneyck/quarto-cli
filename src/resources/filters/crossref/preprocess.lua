@@ -86,7 +86,7 @@ function preprocess()
             parentId = el.attr.identifier
             
             -- provide error caption if there is none
-            if not refCaptionFromDiv(el) then
+            if hasFigureRef(el) and not refCaptionFromDiv(el) then
               local err = pandoc.Para(noCaption())
               el.content:insert(err)
             end
