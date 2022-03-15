@@ -333,7 +333,9 @@ export async function compileWithCache(
     }
     return outputFilePath;
   } else {
-    const outputFilePath = temp.createFile({ suffix: "css" });
+    const outputFilePath = temp.createFile("compileWithCache", {
+      suffix: "css",
+    });
     // Skip the cache and just compile
     await dartCompile(
       input,

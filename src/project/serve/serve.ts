@@ -184,7 +184,11 @@ export async function serveProject(
   const finalOutput = renderResultFinalOutput(renderResult);
 
   // create mirror of project for serving
-  const serveDir = copyProjectForServe(project, true, temp.createDir());
+  const serveDir = copyProjectForServe(
+    project,
+    true,
+    temp.createDir("serveProject"),
+  );
   const serveProject = (await projectContext(serveDir, flags, false, true))!;
 
   // append resource files from render results

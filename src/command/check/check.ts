@@ -59,7 +59,7 @@ async function checkInstall(temp: TempContext) {
     message: kMessage,
     doneMessage: kMessage + "OK\n",
   }, async () => {
-    const mdPath = temp.createFile({ suffix: "check.md" });
+    const mdPath = temp.createFile("checkInstall", { suffix: "check.md" });
     Deno.writeTextFileSync(
       mdPath,
       `
@@ -115,7 +115,9 @@ async function checkJupyterInstallation(temp: TempContext) {
 }
 
 async function checkJupyterRender(temp: TempContext) {
-  const qmdPath = temp.createFile({ suffix: "check.qmd" });
+  const qmdPath = temp.createFile("checkJupyterRender", {
+    suffix: "check.qmd",
+  });
   Deno.writeTextFileSync(
     qmdPath,
     `
@@ -172,7 +174,7 @@ async function checkKnitrInstallation(temp: TempContext) {
 }
 
 async function checkKnitrRender(temp: TempContext) {
-  const rmdPath = temp.createFile({ suffix: "check.rmd" });
+  const rmdPath = temp.createFile("checkKnitrRender", { suffix: "check.rmd" });
   Deno.writeTextFileSync(
     rmdPath,
     `

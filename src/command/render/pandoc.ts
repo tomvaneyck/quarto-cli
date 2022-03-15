@@ -449,7 +449,9 @@ export async function runPandoc(
   }
 
   // filter results json file
-  const filterResultsFile = options.temp.createFile();
+  const filterResultsFile = options.temp.createFile(
+    "ranPandoc - filter results file",
+  );
 
   // set parameters required for filters (possibily mutating all of it's arguments
   // to pull includes out into quarto parameters so they can be merged)
@@ -567,7 +569,7 @@ export async function runPandoc(
     keepSourceBlock(options.format, options.source);
 
   // write input to temp file and pass it to pandoc
-  const inputTemp = options.temp.createFile({
+  const inputTemp = options.temp.createFile("runPandoc - input temp", {
     prefix: "quarto-input",
     suffix: ".md",
   });
@@ -590,7 +592,7 @@ export async function runPandoc(
   // This gives the semantics we want, as our metadata is 'logically' at the top of the
   // file and subsequent blocks within the file should indeed override it (as should
   // user invocations of --metadata-file or -M, which are included below in pandocArgs)
-  const metadataTemp = options.temp.createFile({
+  const metadataTemp = options.temp.createFile("runPandoc - metadata file", {
     prefix: "quarto-metadata",
     suffix: ".yml",
   });
@@ -811,10 +813,13 @@ export function resolveDependencies(
     delete extras.html?.[kDependencies];
 
     // write to external file
-    const dependenciesHead = temp.createFile({
-      prefix: "dependencies",
-      suffix: ".html",
-    });
+    const dependenciesHead = temp.createFile(
+      "resolveDependencies",
+      {
+        prefix: "dependencies",
+        suffix: ".html",
+      },
+    );
     Deno.writeTextFileSync(dependenciesHead, lines.join("\n"));
     extras[kIncludeInHeader] = [dependenciesHead].concat(
       extras[kIncludeInHeader] || [],
@@ -837,7 +842,9 @@ function resolveBodyEnvelope(
       content?: string,
     ) => {
       if (content) {
-        const file = temp.createFile({ suffix: ".html" });
+        const file = temp.createFile(`resolveBodyEnvelope- ${type}`, {
+          suffix: ".html",
+        });
         Deno.writeTextFileSync(file, content);
         if (!prepend) {
           pandoc[type] = (pandoc[type] || []).concat(file);

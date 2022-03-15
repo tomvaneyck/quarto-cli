@@ -82,6 +82,7 @@ export async function writeDefaultsFile(
       skipInvalid: true,
     });
   const defaultsFile = temp.createFile(
+    "writeDefaultsFile",
     { prefix: "quarto-defaults", suffix: ".yml" },
   );
   await Deno.writeTextFile(defaultsFile, defaultsStr);

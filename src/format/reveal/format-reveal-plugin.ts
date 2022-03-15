@@ -270,7 +270,9 @@ export async function revealPluginExtras(
   const linkTags = stylesheets.map((file) => {
     return `<link href="${file}" rel="stylesheet">`;
   }).join("\n");
-  const linkTagsInclude = temp.createFile({ suffix: ".html" });
+  const linkTagsInclude = temp.createFile("revealPluginExtras", {
+    suffix: ".html",
+  });
   Deno.writeTextFileSync(linkTagsInclude, linkTags);
   extras[kIncludeInHeader]?.push(linkTagsInclude);
 

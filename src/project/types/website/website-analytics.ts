@@ -366,7 +366,7 @@ cookieconsent.run({
 }
 
 function scriptFile(script: string, temp: TempContext) {
-  const gaScriptFile = temp.createFile({ suffix: ".js" });
+  const gaScriptFile = temp.createFile("scriptFile", { suffix: ".js" });
   Deno.writeTextFileSync(gaScriptFile, script);
   return gaScriptFile;
 }

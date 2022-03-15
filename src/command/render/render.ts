@@ -461,7 +461,7 @@ export async function renderExecute(
   const executeResult = await context.engine.execute({
     target: context.target,
     resourceDir: resourcePath(),
-    tempDir: context.options.temp.createDir(),
+    tempDir: context.options.temp.createDir("executeResult"),
     dependencies: resolveDependencies,
     libDir: context.libDir,
     format: context.format,
@@ -557,7 +557,7 @@ export async function renderPandoc(
         format,
         output: recipe.output,
         resourceDir: resourcePath(),
-        tempDir: context.options.temp.createDir(),
+        tempDir: context.options.temp.createDir("dependenciesResult"),
         libDir: context.libDir,
         dependencies: executeResult.engineDependencies[engineName],
         quiet: context.options.flags?.quiet,
@@ -602,7 +602,7 @@ export async function renderPandoc(
       target: context.target,
       format,
       output: recipe.output,
-      tempDir: context.options.temp.createDir(),
+      tempDir: context.options.temp.createDir("renderPandoc"),
       preserve: executeResult.preserve,
       quiet: context.options.flags?.quiet,
     });

@@ -399,7 +399,9 @@ function processCssIntoExtras(
 
     if (dirty) {
       const cleanedCss = css.replaceAll(kVariablesRegex, "");
-      const newCssPath = temp.createFile({ suffix: ".css" });
+      const newCssPath = temp.createFile("processCssIntoExtras", {
+        suffix: ".css",
+      });
       Deno.writeTextFileSync(newCssPath, cleanedCss);
       return newCssPath;
     }

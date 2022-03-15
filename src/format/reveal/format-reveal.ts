@@ -218,7 +218,7 @@ export function revealjsFormat() {
         offset: string,
       ) => {
         // render styles template based on options
-        const stylesFile = temp.createFile({ suffix: ".html" });
+        const stylesFile = temp.createFile("formatExtras", { suffix: ".html" });
         const styles = renderEjs(
           formatResourcePath("revealjs", "styles.html"),
           { [kScrollable]: format.metadata[kScrollable] },

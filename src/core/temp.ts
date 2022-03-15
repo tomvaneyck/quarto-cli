@@ -5,7 +5,7 @@
 *
 */
 
-import { warning } from "log/mod.ts";
+import { debug, warning } from "log/mod.ts";
 import { join } from "path/mod.ts";
 import { ensureDirSync } from "fs/mod.ts";
 import { removeIfExists } from "./path.ts";
@@ -24,8 +24,8 @@ export function cleanupSessionTempDir() {
 }
 
 export interface TempContext {
-  createFile: (options?: Deno.MakeTempOptions) => string;
-  createDir: (options?: Deno.MakeTempOptions) => string;
+  createFile: (tag: string, options?: Deno.MakeTempOptions) => string;
+  createDir: (tag: string, options?: Deno.MakeTempOptions) => string;
   cleanup: () => void;
 }
 
@@ -35,13 +35,16 @@ export function createTempContext(options?: Deno.MakeTempOptions) {
     dir: tempDir,
   });
   return {
-    createFile: (options?: Deno.MakeTempOptions) => {
+    createFile: (tag: string, options?: Deno.MakeTempOptions) => {
+      debug(`Create Temp File: ${tag}`);
       return Deno.makeTempFileSync({ ...options, dir });
     },
-    createDir: (options?: Deno.MakeTempOptions) => {
+    createDir: (tag: string, options?: Deno.MakeTempOptions) => {
+      debug(`Create Temp Dir: ${tag}`);
       return Deno.makeTempDirSync({ ...options, dir });
     },
     cleanup: () => {
+      debug("Clean Up Temp Files");
       if (dir) {
         try {
           removeIfExists(dir);

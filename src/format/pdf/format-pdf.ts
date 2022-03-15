@@ -300,7 +300,7 @@ async function processLines(
   temp: TempContext,
 ) {
   // The temp file we generate into
-  const outputFile = temp.createFile({ suffix: ".tex" });
+  const outputFile = temp.createFile("processLines", { suffix: ".tex" });
   const file = await Deno.open(inputFile);
   try {
     for await (const line of readLines(file)) {

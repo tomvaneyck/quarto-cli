@@ -157,7 +157,9 @@ export function outputRecipe(
       // output to stdout: direct pandoc to write to a temp file then we'll
       // forward to stdout (necessary b/c a postprocesor may need to act on
       // the output before its complete)
-      updateOutput(options.temp.createFile({ suffix: "." + ext }));
+      updateOutput(
+        options.temp.createFile("outputRecipe", { suffix: "." + ext }),
+      );
       completeActions.push(() => {
         writeFileToStdout(recipe.output);
         Deno.removeSync(recipe.output);
@@ -340,7 +342,7 @@ async function patchTemplate(
     const patched = patch(result.stdout!);
 
     // write a temp file w/ the patched template
-    const templateDir = temp.createDir();
+    const templateDir = temp.createDir("patchTemplate");
     const template = await Deno.makeTempFile(
       { suffix: kPatchedTemplateExt, dir: templateDir },
     );

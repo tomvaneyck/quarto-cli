@@ -868,7 +868,7 @@ export async function ojsCompile(
     `</script>`,
   ]
     .join("\n");
-  const includeAfterBodyFile = options.temp.createFile();
+  const includeAfterBodyFile = options.temp.createFile("ojsCompile");
   Deno.writeTextFileSync(includeAfterBodyFile, afterBody);
 
   // we need to inline esbuild-bundle.js rather than link to it in order
@@ -900,7 +900,7 @@ export async function ojsCompile(
       `</script>`,
     ];
 
-    const filename = options.temp.createFile();
+    const filename = options.temp.createFile("ojsCompile");
     Deno.writeTextFileSync(filename, ojsBundle.join("\n"));
     ojsBundleTempFiles.push(filename);
   }
