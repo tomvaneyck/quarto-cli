@@ -7,8 +7,13 @@
 
 import { MuxAsyncIterator, pooledMap } from "async/mod.ts";
 import { iterateReader } from "streams/mod.ts";
-import { info } from "log/mod.ts";
+import { debug, info } from "log/mod.ts";
 import { removeIfExists } from "./path.ts";
+import {
+  performanceEnd,
+  performanceMark,
+  performanceStart,
+} from "./performance.ts";
 
 export interface ProcessResult {
   success: boolean;
@@ -25,6 +30,9 @@ export async function execProcess(
 ): Promise<ProcessResult> {
   // define process
   try {
+    performanceStart();
+    performanceMark("execProcess");
+
     // If the caller asked for stdout/stderr to be directed to the rid of an open
     // file, just allow that to happen. Otherwise, specify piped and we will implement
     // the proper behavior for inherit, etc....
@@ -126,6 +134,9 @@ export async function execProcess(
 
     // close the process
     process.close();
+
+    const timing = performanceEnd();
+    debug(`[${timing[0].duration}ms] Exec ${options.cmd.join(" ")}`);
 
     return {
       success: status.success,
