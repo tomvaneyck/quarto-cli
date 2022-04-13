@@ -406,14 +406,19 @@ async function markdownFromNotebook(file: string, format?: Format) {
     file,
     format?.execute[kIpynbFilters],
   );
-  const nb = JSON.parse(nbContents);
-  const cells = nb.cells as Array<{ cell_type: string; source: string[] }>;
-  const markdown = cells.reduce((md, cell) => {
-    if (["markdown", "raw"].includes(cell.cell_type)) {
-      return md + "\n" + cell.source.join("") + "\n";
-    } else {
-      return md;
-    }
-  }, "");
-  return markdown;
+  try {
+    const nb = JSON.parse(nbContents);
+    const cells = nb.cells as Array<{ cell_type: string; source: string[] }>;
+    const markdown = cells.reduce((md, cell) => {
+      if (["markdown", "raw"].includes(cell.cell_type)) {
+        return md + "\n" + cell.source.join("") + "\n";
+      } else {
+        return md;
+      }
+    }, "");
+    return markdown;
+  } catch (error) {
+    console.log(nbContents);
+    throw error;
+  }
 }
