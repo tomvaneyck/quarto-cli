@@ -12,10 +12,53 @@ import { basename, dirname, join } from "path/mod.ts";
 import { writeAll } from "io/mod.ts";
 import { ensureDirSync } from "fs/mod.ts";
 import { pandocAutoIdentifier } from "../../core/pandoc/pandoc-id.ts";
+import { lines } from "../../core/lib/text.ts";
 
 const kObservableSiteUrl = "https://observablehq.com/";
 const kObservableApiUrl = "https://api.observablehq.com/";
 const kFormatHtml = "format: html";
+
+export interface ObservableHQNotebookMetadata {
+  title: string;
+  author: string;
+  version: string;
+  url: string;
+  runtimeVersion: string;
+}
+
+export async function extractNotebookMetadata(
+  notebookId: string,
+): Promise<ObservableHQNotebookMetadata | undefined> {
+  const url = `${kObservableApiUrl}${notebookId}.js`;
+  const res = await fetch(url);
+  if (res.status !== 200) {
+    return undefined;
+  }
+  const text = await res.text();
+  const result = {
+    title: "",
+    author: "",
+    version: "",
+    url: "",
+    runtimeVersion: "",
+  };
+  const splitColon = (l: string): [string, string] => {
+    const v = l.indexOf(":");
+    return [l.slice(0, v).trim(), l.slice(v + 1).trim()];
+  };
+  for (const line of lines(text)) {
+    if (!line.startsWith("//")) {
+      break;
+    }
+    const [key, value] = splitColon(line.slice(3).trim());
+    if (key === "URL") result.url = value;
+    else if (key === "Title") result.title = value;
+    else if (key === "Author") result.author = value;
+    else if (key === "Version") result.version = value;
+    else if (key === "Runtime version") result.runtimeVersion = value;
+  }
+  return result;
+}
 
 export function isObservableUrl(url: string) {
   return url.startsWith(kObservableSiteUrl) ||

@@ -78,6 +78,9 @@ import {
   join as mappedJoin,
 } from "../../core/lib/mapped-text.ts";
 import { getDivAttributes } from "../../core/handlers/base.ts";
+import { extractNotebookMetadata } from "../../command/convert/observable.ts";
+
+import { stringify } from "encoding/yaml.ts";
 
 export interface OjsCompileOptions {
   source: string;
@@ -100,12 +103,11 @@ interface SubfigureSpec {
   caption?: string;
 }
 
-// TODO decide how source code is presented, we've lost this
-// feature from the ojs-engine move
 export async function ojsCompile(
   options: OjsCompileOptions,
 ): Promise<OjsCompileResult> {
   const { markdown, project, ojsBlockLineNumbers } = options;
+  const metadata: Record<string, unknown> = {};
 
   if (!isJavascriptCompatible(options.format)) {
     return { markdown: markdown };
@@ -341,6 +343,41 @@ export async function ojsCompile(
         }
       }
 
+      const resolveAutoCitation = () => {
+        throw new Error("unimplemented");
+      };
+      // handle ojs-cite-import
+      const handleOjsImportCitation = async () => {
+        if (typeof cell.options?.["ojs-cite-import"] !== "string") {
+          return;
+        }
+        let citation = cell.options?.["ojs-cite-import"];
+        if (citation === "auto") {
+          citation = resolveAutoCitation();
+        }
+        const ojsNotebookMetadata = await extractNotebookMetadata(citation);
+        if (ojsNotebookMetadata === undefined) {
+          throw new Error(`Could not resolve ojs-cite-import ${citation}`);
+        }
+        if (metadata.references === undefined) {
+          metadata.references = [];
+        }
+        const notebookReferences = [
+          {
+            id: citation.slice(1).replace(/\//g, "-"), // skip the @, replace / with -
+            type: "other",
+            author: [ojsNotebookMetadata.author],
+            title: ojsNotebookMetadata.title,
+            url: ojsNotebookMetadata.url,
+          },
+        ];
+        metadata.references = mergeConfigs(
+          metadata.references,
+          notebookReferences,
+        );
+      };
+      await handleOjsImportCitation();
+
       pageResources.push(
         ...(await extractResourceDescriptionsFromOJSChunk(
           cellSrcStr,
@@ -552,7 +589,6 @@ export async function ojsCompile(
           outputDiv.push(outputInnerDiv);
           outputInnerDiv.push(ojsDiv);
           if (spec.caption) {
-            // FIXME does this also need figcaption?
             outputInnerDiv.push(pandocRawStr(spec.caption as string));
           }
           div.push(outputDiv);
@@ -827,6 +863,12 @@ export async function ojsCompile(
     ...(extras?.[kIncludeInHeader] || []),
     ...ojsBundleTempFiles,
   ];
+
+  if (metadata) {
+    ls.push("\n\n---\n");
+    ls.push(stringify(metadata));
+    ls.push("\n---\n");
+  }
 
   return {
     markdown: mappedJoin(ls, ""),
