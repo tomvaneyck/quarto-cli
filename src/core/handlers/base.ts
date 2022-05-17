@@ -80,12 +80,24 @@ import { withCriClient } from "../cri/cri.ts";
 const handlers: Record<string, LanguageHandler> = {};
 
 let globalFigureCounter: Record<string, number> = {};
+export function uniqueFigureName(prefix?: string, extension?: string) {
+  prefix = prefix ?? "figure-";
+  extension = extension ?? ".png";
+
+  if (!globalFigureCounter[prefix]) {
+    globalFigureCounter[prefix] = 1;
+  } else {
+    globalFigureCounter[prefix]++;
+  }
+
+  return `${prefix}${globalFigureCounter[prefix]}${extension}`;
+}
 
 export function resetFigureCounter() {
   globalFigureCounter = {};
 }
 
-function makeHandlerContext(
+export function makeHandlerContext(
   options: LanguageCellHandlerOptions,
 ): {
   context: LanguageCellHandlerContext;
@@ -210,16 +222,8 @@ function makeHandlerContext(
       }
     },
     uniqueFigureName(prefix?: string, extension?: string) {
-      prefix = prefix ?? "figure-";
-      extension = extension ?? ".png";
+      const pngName = uniqueFigureName(prefix, extension);
 
-      if (!globalFigureCounter[prefix]) {
-        globalFigureCounter[prefix] = 1;
-      } else {
-        globalFigureCounter[prefix]++;
-      }
-
-      const pngName = `${prefix}${globalFigureCounter[prefix]}${extension}`;
       const tempName = join(context.figuresDir(), pngName);
       const mdName = relative(dirname(options.context.target.source), tempName);
 

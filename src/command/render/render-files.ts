@@ -76,6 +76,7 @@ import {
 } from "./freeze.ts";
 import { isJupyterNotebook } from "../../core/jupyter/jupyter.ts";
 import { MappedString } from "../../core/lib/text-types.ts";
+import { handleTSFilters } from "../../core/ts-filters/ts-filters.ts";
 
 export async function renderExecute(
   context: RenderContext,
@@ -411,6 +412,14 @@ export async function renderFiles(
             ojsBlockLineNumbers,
           );
         resourceFiles.push(...ojsResourceFiles);
+
+        // handle post-engine ts filters
+        executeResult.markdown = await handleTSFilters(
+          {
+            ...languageCellHandlerOptions,
+            markdown: executeResult.markdown,
+          },
+        );
 
         // keep md if requested
         const keepMd = executionEngineKeepMd(context.target.input);
