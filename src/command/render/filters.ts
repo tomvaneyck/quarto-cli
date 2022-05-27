@@ -442,6 +442,14 @@ function quartoFilterParams(
   }
   params[kCellLanguages] = options.format.metadata?.[kCellLanguages] || {};
 
+  const cellLanguages = mergeConfigs(
+    format.render[kCellLanguages] ?? {},
+    extensionCellLanguages(options),
+  );
+  if (Object.keys(cellLanguages).length) {
+    params[kCellLanguages] = cellLanguages;
+  }
+
   params[kHtmlMathMethod] = defaults?.[kHtmlMathMethod];
 
   const figResponsive = format.metadata[kFigResponsive] === true;
@@ -473,6 +481,24 @@ function extensionShortcodes(options: PandocOptions) {
     });
   }
   return extensionShortcodes;
+}
+
+function extensionCellLanguages(
+  options: PandocOptions,
+): Record<string, string> {
+  let result: Record<string, string> = {};
+  if (options.extension) {
+    const allExtensions = options.extension?.extensions(
+      options.source,
+      options.project,
+    );
+    Object.values(allExtensions).forEach((extension) => {
+      if (extension.contributes["cell-languages"]) {
+        result = mergeConfigs(result, extension.contributes["cell-languages"]);
+      }
+    });
+  }
+  return result;
 }
 
 function initFilterParams(dependenciesFile: string) {

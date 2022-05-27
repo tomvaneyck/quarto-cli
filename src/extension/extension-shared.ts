@@ -24,6 +24,7 @@ export interface Extension extends Record<string, unknown> {
   path: string;
   [kContributes]: {
     shortcodes?: string[];
+    "cell-languages"?: Record<string, string>;
     filters?: string[];
     format?: Record<string, unknown>;
   };

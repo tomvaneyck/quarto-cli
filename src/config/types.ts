@@ -16,6 +16,7 @@ import {
   kCalloutNoteCaption,
   kCalloutTipCaption,
   kCalloutWarningCaption,
+  kCellLanguages,
   kCiteMethod,
   kCiteproc,
   kCodeFold,
@@ -320,6 +321,7 @@ export interface FormatRender {
   };
   [kTblColwidths]?: "auto" | boolean | number[];
   [kShortcodes]?: string[];
+  [kCellLanguages]?: Map<string, string>;
   [kMergeIncludes]?: boolean;
   [kLatexAutoMk]?: boolean;
   [kLatexAutoInstall]?: boolean;
