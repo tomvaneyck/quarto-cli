@@ -43,6 +43,7 @@ export const kIpynbFilters = "ipynb-filters";
 export const kIPynbTitleBlockTemplate = "ipynb-title-block";
 
 export const kShortcodes = "shortcodes";
+export const kCellLanguages = "cell-languages";
 
 export const kKeepMd = "keep-md";
 export const kKeepTex = "keep-tex";

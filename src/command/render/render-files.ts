@@ -9,6 +9,7 @@
 import "../../core/handlers/handlers.ts";
 
 import {
+  kCellLanguages,
   kExecuteEnabled,
   kFreeze,
   kIncludeInHeader,
@@ -22,7 +23,7 @@ import { initDenoDom } from "../../core/deno-dom.ts";
 import { HandlerContextResults } from "../../core/handlers/types.ts";
 import {
   handleLanguageCells,
-  languages,
+  languages as tsLanguages,
   resetFigureCounter,
 } from "../../core/handlers/base.ts";
 import { LanguageCellHandlerOptions } from "../../core/handlers/types.ts";
@@ -152,6 +153,10 @@ export async function renderExecute(
 
   // calculate figsDir
   const figsDir = join(filesDir, figuresDir(context.format.pandoc.to));
+  const cellLangs = context.format.metadata?.[kCellLanguages] as
+    | Map<string, string>
+    | undefined;
+  const luaLanguages = Object.keys(cellLangs ?? {});
 
   // execute computations
   const executeResult = await context.engine.execute({
@@ -165,7 +170,7 @@ export async function renderExecute(
     cwd: flags.executeDir,
     params: resolveParams(flags.params, flags.paramsFile),
     quiet: flags.quiet,
-    handledLanguages: languages(),
+    handledLanguages: [...tsLanguages(), ...luaLanguages],
   });
 
   // write the freeze file if we are in a project

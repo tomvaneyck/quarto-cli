@@ -47,9 +47,12 @@ import("../common/lunacolors.lua")
 import("../common/log.lua")
 import("../common/url.lua")
 import("../common/paths.lua")
+import("../common/extensions.lua")
 import("results.lua")
 import("includes.lua")
 import("options.lua")
+import("cell-language-handlers.lua")
+import("cell-languages.lua")
 import("shortcodes.lua")
 import("shortcodes-handlers.lua")
 import("outputs.lua")
@@ -78,12 +81,14 @@ import("include-paths.lua")
 
 initParams()
 initShortcodeHandlers()
+initCellLanguageHandlers()
 
 return {
   readIncludes(),
   initOptions(),
   shortCodesBlocks(),  
-  shortCodesInlines(),  
+  shortCodesInlines(),
+  cellLanguageBlocks(),
   tableMergeRawHtml(),
   tableRenderRawHtml(),
   tableColwidthCell(),

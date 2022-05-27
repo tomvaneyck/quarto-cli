@@ -9,6 +9,7 @@ import { existsSync } from "fs/mod.ts";
 
 import {
   kBibliography,
+  kCellLanguages,
   kCitationLocation,
   kCiteMethod,
   kCodeFold,
@@ -439,6 +440,8 @@ function quartoFilterParams(
     params[kShortcodes] = params[kShortcodes] || [];
     (params[kShortcodes] as string[]).push(...extShortcodes);
   }
+  params[kCellLanguages] = options.format.metadata?.[kCellLanguages] || {};
+
   params[kHtmlMathMethod] = defaults?.[kHtmlMathMethod];
 
   const figResponsive = format.metadata[kFigResponsive] === true;
