@@ -30,7 +30,7 @@ import {
 } from "../common/account.ts";
 import { quartoConfig } from "../../core/quarto.ts";
 import { withRetry } from "../../core/retry.ts";
-import { PublishHandler, publishSite } from "../common/publish.ts";
+import { handlePublish, PublishHandler } from "../common/publish.ts";
 
 // TODO: documents
 
@@ -146,6 +146,7 @@ async function resolveTarget(
 
 function publish(
   account: AccountToken,
+  type: "document" | "site",
   render: (siteDir: string) => Promise<PublishFiles>,
   target?: PublishRecord,
 ): Promise<[PublishRecord, URL]> {
@@ -157,25 +158,31 @@ function publish(
   const handler: PublishHandler<Site, Deploy> = {
     name: kNetlify,
     createSite: async () => {
-      return await client.site.createSite({
-        site: {
-          force_ssl: true,
-        },
-      }) as unknown as Site;
+      return withSslUrl(
+        await client.site.createSite({
+          site: {
+            force_ssl: true,
+          },
+        }) as unknown as Site,
+      );
     },
     createDeploy: async (siteId: string, files: Record<string, string>) => {
-      return await client.deploy.createSiteDeploy({
-        siteId,
-        deploy: {
-          files,
-          async: true,
-        },
-      });
+      return withSslUrl(
+        await client.deploy.createSiteDeploy({
+          siteId,
+          deploy: {
+            files,
+            async: true,
+          },
+        }),
+      );
     },
     getDeploy: async (deployId: string) => {
-      return await client.deploy.getDeploy({
-        deployId,
-      });
+      return withSslUrl(
+        await client.deploy.getDeploy({
+          deployId,
+        }),
+      );
     },
     uploadDeployFile: async (
       deployId: string,
@@ -192,7 +199,14 @@ function publish(
     },
   };
 
-  return publishSite<Site, Deploy>(handler, render, target);
+  return handlePublish<Site, Deploy>(handler, type, render, target);
+}
+
+function withSslUrl(obj: { ssl_url?: string; url?: string }) {
+  return {
+    ...obj,
+    url: obj.ssl_url || obj.url,
+  };
 }
 
 function isUnauthorized(err: Error) {

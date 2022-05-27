@@ -27,6 +27,7 @@ export interface PublishDeploy {
   id?: string;
   state?: string;
   required?: string[];
+  url?: string;
   admin_url?: string;
 }
 
@@ -48,11 +49,12 @@ export interface PublishHandler<
   ) => Promise<void>;
 }
 
-export async function publishSite<
+export async function handlePublish<
   Site extends PublishSite,
   Deploy extends PublishDeploy,
 >(
   handler: PublishHandler<Site, Deploy>,
+  type: "document" | "site",
   render: (siteDir: string) => Promise<PublishFiles>,
   target?: PublishRecord,
 ): Promise<[PublishRecord, URL]> {
@@ -79,7 +81,7 @@ export async function publishSite<
   let siteDeploy: Deploy | undefined;
   const files: Array<[string, string]> = [];
   await withSpinner({
-    message: "Preparing to publish site",
+    message: `Preparing to publish ${type}`,
   }, async () => {
     const textDecoder = new TextDecoder();
     for (const file of publishFiles.files) {
@@ -103,12 +105,7 @@ export async function publishSite<
     // wait for it to be ready
     while (true) {
       siteDeploy = await handler.getDeploy(siteDeploy.id!);
-      if (siteDeploy.state === "prepared") {
-        if (!siteDeploy.required) {
-          throw new Error(
-            "Site deploy prepared but no required files provided",
-          );
-        }
+      if (siteDeploy.state === "prepared" || siteDeploy.state === "ready") {
         break;
       }
       await sleep(250);
@@ -141,13 +138,15 @@ export async function publishSite<
   completeMessage(`Uploading files (complete)`);
 
   // wait on ready
+  let targetUrl = target.url;
   let adminUrl = target.url;
   await withSpinner({
-    message: "Deploying published site",
+    message: `Deploying published ${type}`,
   }, async () => {
     while (true) {
       const deployReady = await handler.getDeploy(siteDeploy?.id!);
       if (deployReady.state === "ready") {
+        targetUrl = deployReady.url || targetUrl;
         adminUrl = deployReady.admin_url || adminUrl;
         break;
       }
@@ -155,7 +154,7 @@ export async function publishSite<
     }
   });
 
-  completeMessage(`Published: ${target.url}\n`);
+  completeMessage(`Published: ${targetUrl}\n`);
 
-  return [target, new URL(adminUrl)];
+  return [{ ...target, url: targetUrl }, new URL(adminUrl)];
 }

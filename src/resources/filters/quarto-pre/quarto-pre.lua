@@ -11,7 +11,8 @@ text = require 'text'
 preState = {
   usingTikz = false,
   results = {
-    resourceFiles = pandoc.List({})
+    resourceFiles = pandoc.List({}),
+    inputTraits = {}
   },
   file = nil,
   appendix = false,
@@ -77,6 +78,7 @@ import("content-hidden.lua")
 import("line-numbers.lua")
 import("output-location.lua")
 import("include-paths.lua")
+import("input-traits.lua")
 -- [/import]
 
 initParams()
@@ -114,6 +116,7 @@ return {
     panelTabset(),
     panelLayout(),
     panelSidebar(),
+    inputTraits()
   }),
   combineFilters({
     fileMetadata(),
