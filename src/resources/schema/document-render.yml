@@ -82,7 +82,13 @@
   schema:
     ref: pandoc-shortcodes
   description: |
-    Speicfy Lua scripts that implement shortcode handlers
+    Specify Lua scripts that implement shortcode handlers
+
+- name: cell-languages
+  schema:
+    ref: pandoc-cell-languages
+  description: |
+    Specify Lua scripts that implement cell language handlers.
 
 - name: keep-md
   schema: boolean

@@ -8202,6 +8202,12 @@ var require_yaml_intelligence_resources = __commonJS({
           arrayOf: "path"
         },
         {
+          id: "pandoc-cell-languages",
+          object: {
+            additionalProperties: "path"
+          }
+        },
+        {
           id: "page-column",
           enum: [
             "body",
@@ -14327,7 +14333,14 @@ var require_yaml_intelligence_resources = __commonJS({
           schema: {
             ref: "pandoc-shortcodes"
           },
-          description: "Speicfy Lua scripts that implement shortcode handlers\n"
+          description: "Specify Lua scripts that implement shortcode handlers\n"
+        },
+        {
+          name: "cell-languages",
+          schema: {
+            ref: "pandoc-cell-languages"
+          },
+          description: "Specify Lua scripts that implement cell language handlers.\n"
         },
         {
           name: "keep-md",
@@ -18766,7 +18779,8 @@ var require_yaml_intelligence_resources = __commonJS({
         "Download buttons for other formats to include on navbar or sidebar\n(one or more of <code>pdf</code>, <code>epub</code>, and `docx)",
         "Download buttons for other formats to include on navbar or sidebar\n(one or more of <code>pdf</code>, <code>epub</code>, and `docx)",
         "Custom tools for navbar or sidebar",
-        "internal-schema-hack"
+        "internal-schema-hack",
+        "Specify Lua scripts that implement cell language handlers."
       ],
       "schema/external-schemas.yml": [
         {
@@ -25008,7 +25022,6 @@ function createLocalizedError(obj) {
       end: { line: 0, column: 0 }
     };
   }
-  console.log({ schemaPath });
   return {
     source: mappedString(source, [{
       start: violatingObject.start,

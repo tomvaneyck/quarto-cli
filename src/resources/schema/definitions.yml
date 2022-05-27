@@ -29,6 +29,10 @@
 - id: pandoc-shortcodes
   arrayOf: path
 
+- id: pandoc-cell-languages
+  object:
+    additionalProperties: path
+
 - id: page-column
   enum:
     [
