@@ -57,6 +57,11 @@ import { mergeConfigs } from "../../core/config.ts";
 import { projectType } from "../../project/types/project-types.ts";
 import { readCodePage } from "../../core/windows.ts";
 import { authorsFilter, authorsFilterActive } from "./authors.ts";
+import {
+  Extension,
+  extensionIdString,
+  FilterExtension,
+} from "../../extension/extension-shared.ts";
 
 const kQuartoParams = "quarto-params";
 
@@ -589,8 +594,62 @@ function resolveFilterExtension(
   options: PandocOptions,
   filters: QuartoFilter[],
 ): QuartoFilter[] {
+  const quartoIndex = filters.findIndex((filter) => {
+    return filter === "quarto";
+  });
+  const citeProcIndex = filters.findIndex((filter) => {
+    return filter === "citeproc";
+  });
+  const validate = (
+    extension: Extension,
+    builtInName: "quarto" | "citeproc",
+    builtInIdx: number,
+    filterIdx: number,
+    filter: FilterExtension,
+  ) => {
+    if (filter.after === builtInName && filterIdx < builtInIdx) {
+      throw new Error(
+        `The filters in the extension ${
+          extensionIdString(extension.id)
+        } must be placed after ${builtInName}.`,
+      );
+    } else if (filter.before === builtInName && filterIdx > builtInIdx) {
+      throw new Error(
+        `The filters in the extension ${
+          extensionIdString(extension.id)
+        } must be placed before ${builtInName}.`,
+      );
+    }
+  };
+  const quartoValidate = (
+    extension: Extension,
+    filterIdx: number,
+    filter: FilterExtension,
+  ) => {
+    const adjustedIdx = quartoIndex === -1
+      ? Number.MAX_SAFE_INTEGER
+      : quartoIndex;
+    return validate(
+      extension,
+      kQuartoFilterMarker,
+      adjustedIdx,
+      filterIdx,
+      filter,
+    );
+  };
+  const citeprocValidate = (
+    extension: Extension,
+    filterIdx: number,
+    filter: FilterExtension,
+  ) => {
+    const adjustedIdx = citeProcIndex === -1
+      ? Number.MAX_SAFE_INTEGER
+      : citeProcIndex;
+    return validate(extension, "citeproc", adjustedIdx, filterIdx, filter);
+  };
+
   // Resolve any filters that are provided by an extension
-  const results = filters.flatMap((filter) => {
+  const results = filters.flatMap((filter, index) => {
     // Look for extension names in the filter list and result them
     // into the filters provided by the extension
     if (
@@ -605,6 +664,12 @@ function resolveFilterExtension(
       );
       const filters = extension?.contributes.filters;
       if (filters) {
+        // Validate the filters
+        filters.forEach((filter) => {
+          quartoValidate(extension, index, filter);
+          citeprocValidate(extension, index, filter);
+        });
+
         return filters.map((extFilter) => {
           return extFilter.filter;
         });
