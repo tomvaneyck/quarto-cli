@@ -605,7 +605,9 @@ function resolveFilterExtension(
       );
       const filters = extension?.contributes.filters;
       if (filters) {
-        return filters;
+        return filters.map((extFilter) => {
+          return extFilter.filter;
+        });
       } else {
         return filter;
       }

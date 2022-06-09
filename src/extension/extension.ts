@@ -13,7 +13,7 @@ import { kProjectType, ProjectContext } from "../project/types.ts";
 import { isSubdir } from "fs/_util.ts";
 
 import { dirname, join, normalize } from "path/mod.ts";
-import { Metadata, PandocFilter } from "../config/types.ts";
+import { Metadata } from "../config/types.ts";
 import { resolvePathGlobs } from "../core/path.ts";
 import { toInputRelativePaths } from "../project/project-shared.ts";
 import { projectType } from "../project/types/project-types.ts";
@@ -24,6 +24,7 @@ import {
   ExtensionContext,
   ExtensionId,
   extensionIdString,
+  FilterExtension,
   kAuthor,
   kCommon,
   kExtensionDir,
@@ -345,6 +346,8 @@ function readExtension(
   extensionFile: string,
 ): Extension {
   const yaml = readYaml(extensionFile) as Metadata;
+
+  // TODO: Validate extension
   const contributes = yaml.contributes as Metadata | undefined;
 
   const title = yaml[kTitle] as string;
@@ -353,9 +356,25 @@ function readExtension(
   const versionParsed = versionRaw ? coerce(versionRaw) : undefined;
   const version = versionParsed ? versionParsed : undefined;
 
-  // The items that can be contributed
+  // The shotcodes that will be contributed
   const shortcodes = contributes?.shortcodes as string[] || [];
-  const filters = contributes?.filters as PandocFilter[] || [];
+
+  // The filters that will be contributed
+  const filterExtensions: FilterExtension[] = [];
+  const filtersRaw = contributes?.filters as unknown;
+  if (filtersRaw) {
+    const unparsedFilters = Array.isArray(filtersRaw)
+      ? filtersRaw
+      : [filtersRaw];
+    for (const unparsedFilter of unparsedFilters) {
+      const parsedFilter = parseFilterExtension(extensionId, unparsedFilter);
+      if (parsedFilter) {
+        filterExtensions.push(parsedFilter);
+      }
+    }
+  }
+
+  // The formats that will be contributed
   const format = contributes?.format as Metadata || [];
 
   // Process the special 'common' key by merging it
@@ -383,10 +402,55 @@ function readExtension(
     path: extensionDir,
     contributes: {
       shortcodes: shortcodes.map((code) => join(extensionDir, code)),
-      filters,
+      filters: filterExtensions,
       format,
     },
   };
+}
+
+function parseFilterExtension(
+  extensionId: ExtensionId,
+  unparsedFilter: unknown,
+): FilterExtension {
+  if (typeof (unparsedFilter) === "string") {
+    // This is a simple lua filter
+    return {
+      filter: {
+        type: "lua",
+        path: unparsedFilter,
+      },
+    };
+  } else if (typeof (unparsedFilter) === "object") {
+    const filterRecord = unparsedFilter as Record<string, unknown>;
+
+    // This is more complex data structure
+    const type = filterRecord.type === "json" ? "json" : "lua";
+    const before = filterRecord.before as "quarto" | "citeproc";
+    const after = filterRecord.after as "quarto" | "citeproc";
+    const path = filterRecord.path as string;
+
+    if (path) {
+      return {
+        filter: {
+          type,
+          path,
+        },
+        before,
+        after,
+      };
+    } else {
+      throw new Error(
+        `A filter in extension ${
+          extensionIdString(extensionId)
+        } is missing a path.`,
+      );
+    }
+  } else {
+    // What is this?
+    throw new Error(
+      `Unrecognizable filter in extension ${extensionIdString(extensionId)}.`,
+    );
+  }
 }
 
 function toExtensionId(extension: string) {

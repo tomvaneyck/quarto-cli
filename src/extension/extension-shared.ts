@@ -24,9 +24,15 @@ export interface Extension extends Record<string, unknown> {
   path: string;
   contributes: {
     shortcodes?: string[];
-    filters?: PandocFilter[];
+    filters?: FilterExtension[];
     format?: Record<string, unknown>;
   };
+}
+
+export interface FilterExtension {
+  filter: PandocFilter;
+  before?: "quarto" | "citeproc";
+  after?: "quarto" | "citeproc";
 }
 
 export interface ExtensionContext {
