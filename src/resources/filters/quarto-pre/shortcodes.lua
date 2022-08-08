@@ -270,6 +270,7 @@ function transformShortcodeInlines(inlines, noRawInlines)
             end
           end
         else
+          warnMissingShortCode(shortCode)
           if noRawInlines then
             tappend(accum, shortcodeInlines)
           else
@@ -294,6 +295,10 @@ function transformShortcodeInlines(inlines, noRawInlines)
     end
   end
   
+  if hadWarns then
+    warn("Some of the shortcodes could not be processed. Document might not be rendered correctly.")
+  end
+
   if transformed then
     return outputInlines
   else
@@ -523,3 +528,11 @@ function shortcodeResultAsBlocks(result, name)
   end
 end
 
+local missingShortCodes = {}
+local hadWarns = false
+function warnMissingShortCode(shortCode)
+  if not missingShortCodes[shortCode.name] then
+    warn("Shortcode " .. shortCode.name .. " missing.")
+    missingShortCodes[shortCode.name] = true
+  end
+end
