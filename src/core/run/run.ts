@@ -16,3 +16,7 @@ export function installRunHandler(handler: RunHandler) {
 export function handlerForScript(script: string) {
   return kRunHandlers.find((handler) => handler.canHandle(script));
 }
+
+// we just need to stick this _somewhere_
+
+import pandocFilter from "pandoc-filter";

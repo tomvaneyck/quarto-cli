@@ -220,7 +220,7 @@
       "/-/binary-search-bounds@v2.0.5-c8IgO4OqUhed8ANHQXKv/dist=es2019,mode=imports/optimized/binary-search-bounds.js": "./cdn.skypack.dev/-/binary-search-bounds@v2.0.5-c8IgO4OqUhed8ANHQXKv/dist=es2019,mode=imports/optimized/binary-search-bounds.js",
       "/-/blueimp-md5@v2.19.0-FsBtHB6ITwdC3L5Giq4Q/dist=es2019,mode=imports/optimized/blueimp-md5.js": "./cdn.skypack.dev/-/blueimp-md5@v2.19.0-FsBtHB6ITwdC3L5Giq4Q/dist=es2019,mode=imports/optimized/blueimp-md5.js",
       "/-/dayjs@v1.8.21-6syVEc6qGP8frQXKlmJD/dist=es2019,mode=imports/optimized/dayjs.js": "./cdn.skypack.dev/-/dayjs@v1.8.21-6syVEc6qGP8frQXKlmJD/dist=es2019,mode=imports/optimized/dayjs.js",
-      "/-/diff@v5.0.0-cU62LaUh1QZHrLzL9VHS/dist=es2019,mode=imports/optimized/diff.js": "./cdn.skypack.dev/-/diff@v5.0.0-cU62LaUh1QZHrLzL9VHS/dist=es2019,mode=imports/optimized/diff.js",
+      "/-/get-stdin@v7.0.0-gLSRomacsJhSecq2yRpn/dist=es2019,mode=imports/optimized/get-stdin.js": "./cdn.skypack.dev/-/get-stdin@v7.0.0-gLSRomacsJhSecq2yRpn/dist=es2019,mode=imports/optimized/get-stdin.js",
       "/-/lodash@v4.17.21-K6GEbP02mWFnLA45zAmi/dist=es2019,mode=imports/unoptimized/cloneDeep.js": "./cdn.skypack.dev/-/lodash@v4.17.21-K6GEbP02mWFnLA45zAmi/dist=es2019,mode=imports/unoptimized/cloneDeep.js",
       "/-/lodash@v4.17.21-K6GEbP02mWFnLA45zAmi/dist=es2019,mode=imports/unoptimized/debounce.js": "./cdn.skypack.dev/-/lodash@v4.17.21-K6GEbP02mWFnLA45zAmi/dist=es2019,mode=imports/unoptimized/debounce.js",
       "/-/lodash@v4.17.21-K6GEbP02mWFnLA45zAmi/dist=es2019,mode=imports/unoptimized/difference.js": "./cdn.skypack.dev/-/lodash@v4.17.21-K6GEbP02mWFnLA45zAmi/dist=es2019,mode=imports/unoptimized/difference.js",
@@ -238,13 +238,13 @@
       "/-/lodash@v4.17.21-K6GEbP02mWFnLA45zAmi/dist=es2019,mode=imports/unoptimized/uniq.js": "./cdn.skypack.dev/-/lodash@v4.17.21-K6GEbP02mWFnLA45zAmi/dist=es2019,mode=imports/unoptimized/uniq.js",
       "/-/lodash@v4.17.21-K6GEbP02mWFnLA45zAmi/dist=es2019,mode=imports/unoptimized/uniqBy.js": "./cdn.skypack.dev/-/lodash@v4.17.21-K6GEbP02mWFnLA45zAmi/dist=es2019,mode=imports/unoptimized/uniqBy.js",
       "/-/moment-guess@v1.2.4-bDXl7KQy0hLGNuGhyGb4/dist=es2019,mode=imports/optimized/moment-guess.js": "./cdn.skypack.dev/-/moment-guess@v1.2.4-bDXl7KQy0hLGNuGhyGb4/dist=es2019,mode=imports/optimized/moment-guess.js",
+      "/-/pandoc-filter@v2.0.2-udGaILMBzLmxq1mTMPnA/dist=es2019,mode=imports/optimized/pandoc-filter.js": "./cdn.skypack.dev/-/pandoc-filter@v2.0.2-udGaILMBzLmxq1mTMPnA/dist=es2019,mode=imports/optimized/pandoc-filter.js",
       "acorn/acorn": "./cdn.skypack.dev/acorn@7.4.1.js",
       "acorn/walk": "./cdn.skypack.dev/acorn-walk@7.2.0.js",
       "ansi_up": "./cdn.skypack.dev/ansi_up@v5.1.0.js",
       "binary-search-bounds": "./cdn.skypack.dev/binary-search-bounds@2.0.5.js",
       "blueimpMd5": "./cdn.skypack.dev/blueimp-md5@2.19.0.js",
       "dayjs/dayjs.min.js": "./cdn.skypack.dev/dayjs@1.8.21/dayjs.min.js",
-      "diff": "./cdn.skypack.dev/diff@5.0.0.js",
       "lodash/cloneDeep.js": "./cdn.skypack.dev/lodash@4.17.21/cloneDeep.js",
       "lodash/debounce.js": "./cdn.skypack.dev/lodash@4.17.21/debounce.js",
       "lodash/difference.js": "./cdn.skypack.dev/lodash@4.17.21/difference.js",
@@ -262,7 +262,8 @@
       "lodash/uniq.js": "./cdn.skypack.dev/lodash@4.17.21/uniq.js",
       "lodash/uniqBy.js": "./cdn.skypack.dev/lodash@4.17.21/uniqBy.js",
       "moment-guess": "./cdn.skypack.dev/moment-guess@1.2.4.js",
-      "observablehq/parser": "./cdn.skypack.dev/@observablehq/parser@4.5.0.js"
+      "observablehq/parser": "./cdn.skypack.dev/@observablehq/parser@4.5.0.js",
+      "pandoc-filter": "./cdn.skypack.dev/pandoc-filter@2.0.2.js"
     },
     "./deno.land/": {
       "./deno.land/std@0.138.0/node/internal/util/inspect.mjs": "./deno.land/std@0.138.0/node/internal/util/inspect.mjs",
