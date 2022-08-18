@@ -71,7 +71,7 @@ end
 
 function typescriptFilter(path)
   return function(doc)
-    local filter = quarto.utils.resolvePath("test-filter.ts")
+    local filter = quarto.utils.resolvePath(path)
     local denoPath = param("deno-path")
     return pandoc.utils.run_json_filter(doc, denoPath, { "run", filter })
   end
