@@ -61,11 +61,20 @@ local function tcontains(t, value)
   return false
 end
 
+function typescriptFilter(path)
+  return function(doc)
+    local filter = quarto.utils.resolvePath("test-filter.ts")
+    local denoPath = param("deno-path")
+    return pandoc.utils.run_json_filter(doc, denoPath, { "run", filter })
+  end
+end
+
 return {
   dump = dump,
   table = {
     isarray = tisarray,
     contains = tcontains
-  }
+  },
+  typescriptFilter = typescriptFilter
 }
 

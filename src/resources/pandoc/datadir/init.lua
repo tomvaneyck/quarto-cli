@@ -1663,7 +1663,8 @@ quarto = {
   },
   utils = {
    dump = utils.dump,
-   resolvePath = resolvePathExt
+   resolvePath = resolvePathExt,
+   typescriptFilter = utils.typescriptFilter
   },
   json = json,
   base64 = base64,

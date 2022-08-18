@@ -17,6 +17,7 @@ export function handlerForScript(script: string) {
   return kRunHandlers.find((handler) => handler.canHandle(script));
 }
 
-// we just need to stick this _somewhere_
+// we just need to stick this _somewhere_ for now to make our vendoring process work.
+// FIXME remove this.
 
 import pandocFilter from "pandoc-filter";

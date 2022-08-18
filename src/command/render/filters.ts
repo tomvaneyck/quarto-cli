@@ -60,6 +60,8 @@ import { authorsFilter, authorsFilterActive } from "./authors.ts";
 import { extensionIdString } from "../../extension/extension-shared.ts";
 import { warning } from "log/mod.ts";
 import { formatHasBootstrap } from "../../format/html/format-html-info.ts";
+import { join } from "path/mod.ts";
+import { quartoConfig } from "../../core/quarto.ts";
 
 const kQuartoParams = "quarto-params";
 
@@ -72,6 +74,8 @@ const kResultsFile = "results-file";
 const kTimingFile = "timings-file";
 
 const kHasBootstrap = "has-bootstrap";
+
+const kDenoPath = "deno-path";
 
 export async function filterParamsJson(
   args: string[],
@@ -111,6 +115,7 @@ export async function filterParamsJson(
     ...filterParams,
     [kResultsFile]: pandocMetadataPath(resultsFile),
     [kTimingFile]: pandocMetadataPath(timingFile),
+    [kDenoPath]: join(quartoConfig.binPath(), "tools", "deno"),
   };
   return JSON.stringify(params);
 }
