@@ -33,6 +33,7 @@
 - Use 'Appendix' as prefix for references to chapters in appendix
 - Index book crossrefs using shorter paths (fix path error seen in #1770)
 - Improve handling of solution/proof content (filter headings, support code blocks)
+- Insert non-breaking space between entity type (e.g. Figure/Table) and number.
 
 ## Code Blocks
 
@@ -134,7 +135,8 @@
 - Add support for Giscus lazy loading (use `loading: lazy` #1357)
 - Properly handle duplicated affilations in author metadata (#1286)
 - Display image path when an error occurs reading PNG metadata
-- `quarto run` preserves stdout and stderr (#1954)
+- `quarto run *.ts` preserves stdout and stderr (#1954)
+- Lua filters: quarto.utils.dump does not loop on circular structures
 
 ## Format Templates
 
