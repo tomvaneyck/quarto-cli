@@ -70,11 +70,17 @@ local function tcontains(t, value)
 end
 
 function typescriptFilter(path)
-  return function(doc)
-    local filter = quarto.utils.resolvePath(path)
-    local denoPath = param("deno-path")
-    return pandoc.utils.run_json_filter(doc, denoPath, { "run", filter })
-  end
+  return {
+    Pandoc = function(doc)
+      local filter = quarto.utils.resolvePath(path)
+      local denoPath = param("deno-path")
+      print("Running json filter")
+      local result = pandoc.utils.run_json_filter(doc, denoPath, {
+        "run", "--cached-only", "--unstable", "--allow-all", "--no-config", os.getenv("QUARTO_IMPORT_MAP"), filter 
+      })
+      return result
+    end
+  }
 end
 
 return {

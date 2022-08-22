@@ -176,6 +176,7 @@ import {
   insertExplicitTimingEntries,
   withTiming,
 } from "../../core/timing.ts";
+import { serve } from "../../core/ipc/ipc.ts";
 
 export async function runPandoc(
   options: PandocOptions,
@@ -908,6 +909,14 @@ export async function runPandoc(
   // workaround for our wonky Lua timing routines
   const luaEpoch = await getLuaTiming();
 
+  const api = {
+    test: (foo: string) => `Yes, this worked! ${foo}`,
+  };
+
+  const ipcServer = serve(api);
+  await ipcServer.ready;
+  console.log("server ready");
+
   // run pandoc
   const result = await execProcess(
     {
@@ -918,6 +927,9 @@ export async function runPandoc(
       },
     },
   );
+
+  ipcServer.close();
+  await ipcServer.done;
 
   // resolve resource files from metadata
   const resources: string[] = resourcesFromMetadata(

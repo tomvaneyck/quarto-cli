@@ -109,7 +109,8 @@ local filterList = {
     panelTabset(),
     panelLayout(),
     panelSidebar(),
-    inputTraits()
+    inputTraits(),
+    typescriptFilter("typescript-test.ts")
   }) },
   { name = "combined-book-file-targets", filter = combineFilters({
     fileMetadata(),
