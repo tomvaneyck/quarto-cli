@@ -38,7 +38,7 @@ if [ -f "$DEV_PATH" ]; then
   fi
 
   # Local import map
-  QUARTO_IMPORT_ARGMAP=--importmap=$QUARTO_SRC_PATH/dev_import_map.json
+  export QUARTO_IMPORT_MAP=--importmap=$QUARTO_SRC_PATH/dev_import_map.json
 
   # Allow calls to override the target
   if [ -z ${QUARTO_TARGET+x} ]; then
@@ -73,7 +73,7 @@ else
   QUARTO_TARGET=${SCRIPT_PATH}/quarto.js
   export QUARTO_BIN_PATH=$SCRIPT_PATH
 
-  QUARTO_IMPORT_ARGMAP=--importmap=$SCRIPT_PATH/vendor/import_map.json
+  export QUARTO_IMPORT_MAP=--importmap=$SCRIPT_PATH/vendor/import_map.json
 
   # Turn of type checking for bundled version
   QUARTO_DENO_OPTIONS=--no-check
@@ -118,4 +118,4 @@ fi
 # Be sure to include any already defined QUARTO_DENO_OPTIONS
 QUARTO_DENO_OPTIONS="--unstable --no-config --cached-only --allow-read --allow-write --allow-run --allow-env --allow-net --allow-ffi ${QUARTO_DENO_OPTIONS}"
 
-"${QUARTO_DENO}" ${QUARTO_ACTION} ${QUARTO_DENO_OPTIONS} ${QUARTO_DENO_EXTRA_OPTIONS} "${QUARTO_IMPORT_ARGMAP}" "${QUARTO_TARGET}" "$@"
+"${QUARTO_DENO}" ${QUARTO_ACTION} ${QUARTO_DENO_OPTIONS} ${QUARTO_DENO_EXTRA_OPTIONS} "${QUARTO_IMPORT_MAP}" "${QUARTO_TARGET}" "$@"

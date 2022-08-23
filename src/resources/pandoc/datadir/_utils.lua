@@ -74,7 +74,6 @@ function typescriptFilter(path)
     Pandoc = function(doc)
       local filter = quarto.utils.resolvePath(path)
       local denoPath = param("deno-path")
-      print("Running json filter")
       local result = pandoc.utils.run_json_filter(doc, denoPath, {
         "run", "--cached-only", "--unstable", "--allow-all", "--no-config", os.getenv("QUARTO_IMPORT_MAP"), filter 
       })
