@@ -1,9 +1,14 @@
 // A wee typescript pandoc filter library
 
 import { Elt, EltType } from "./pandoc-filter.ts";
+import { EltPorcelain } from "./porcelain.ts";
 
-export type Walker = {
+export type WalkerPlain = {
   [K in EltType as `${K}`]?: (v: Elt<K>) => unknown;
+};
+
+export type WalkerPorcelain = {
+  [K in EltType as `${K}`]?: (v: EltPorcelain<K>) => unknown;
 };
 
 export type PandocNode = { [key: string]: unknown };
@@ -86,8 +91,8 @@ export function processNode(
 }
 
 // acorn-style walker.
-export function walker(
-  obj: Walker,
+export function walker<Type extends WalkerPlain | WalkerPorcelain>(
+  obj: Type,
 ) {
   const handle = (input: unknown) => {
     // deno-lint-ignore no-explicit-any

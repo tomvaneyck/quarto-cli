@@ -1,19 +1,3 @@
-export type EltMapKeys = {
-  Str: "content";
-  Test: ["field1", ["field2", "field3"], "field4"];
-  Simple: ["field5", "field6"];
-  Nasty: { k: "field8" };
-};
-
-export type EltMap = {
-  Str: string;
-  Test: [string, [number, boolean], boolean];
-  Simple: [number, boolean];
-  Nasty: { k: string };
-};
-
-type Combined = Make<EltMapKeys, EltMap>;
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // now for the typescript magic
 //
@@ -22,6 +6,18 @@ type Combined = Make<EltMapKeys, EltMap>;
 // https://stackoverflow.com/a/68568535/221007
 // https://stackoverflow.com/a/70317058/221007
 // https://stackoverflow.com/a/50375286/221007
+
+// this type function lets us derived typed "porcelain" types for the
+// Pandoc JSON AST so that it feels much closer to the Lua version
+// while still being typed.
+//
+// It's pretty hairy, but the dev experience on the other hand is great.
+
+export type Make<Keys, Values> = [Keys, Values] extends [any[], any[]]
+  ? Make<ObjFromTuple<Keys>, ObjFromTuple<Values>>
+  : 
+    & MakeClean<Keys, Values>
+    & AllValues<MakeCompound<Keys, Values>>;
 
 type MakeFromObj<Keys, Values> = Keys extends { [key: string | number]: string }
   ? Values extends { [key: string | number]: infer _V } ? {
@@ -54,12 +50,6 @@ type MakeCompound<Keys, Values> = Keys extends
   : never
   : never;
 
-export type Make<Keys, Values> = [Keys, Values] extends [any[], any[]]
-  ? Make<ObjFromTuple<Keys>, ObjFromTuple<Values>>
-  : 
-    & MakeClean<Keys, Values>
-    & AllValues<MakeCompound<Keys, Values>>;
-
 type AllValues<T> = T extends { [key: string | number]: infer U }
   ? UnionToIntersection<U>
   : never;
@@ -67,9 +57,10 @@ type AllValues<T> = T extends { [key: string | number]: infer U }
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends
   ((k: infer I) => void) ? I : never;
 
-type ObjFromTuple<T> = T extends any[] ? {
+type ObjFromTuple<T> = T extends any[] ? T["length"] extends NumberUpTo<10> ? {
   [P in NumberUpTo<T["length"]> as `${P}`]: ObjFromTuple<T[P]>;
 }
+: T
   : T;
 
 type IsNegative<N extends number> = `${N}` extends `-${number}` ? true : false;
@@ -97,3 +88,23 @@ type Subtract<A extends number, B extends number> = BuildTuple<A> extends
 type Add<A extends number, B extends number> = Length<
   [...BuildTuple<A>, ...BuildTuple<B>]
 >;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type EltMapKeys = {
+  Str: "content";
+  Test: ["field1", ["field2", "field3"], "field4"];
+  Simple: ["field5", "field6"];
+  Nasty: { k: "field8" };
+  bug: ["id", "classes", "attributes"];
+};
+
+type EltMap = {
+  Str: string;
+  Test: [string, [number, boolean], boolean];
+  Simple: [number, boolean];
+  Nasty: { k: string };
+  bug: [string, Array<string>, Array<[string, string]>];
+};
+
+type Test = Make<EltMapKeys, EltMap>;

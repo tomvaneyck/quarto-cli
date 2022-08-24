@@ -1,12 +1,13 @@
-import { Elt, EltMap, EltType } from "./pandoc-filter.ts";
-import { Make } from "./_experiments.ts";
-import { filterAPI } from "./api.ts";
+import { EltMap, EltType } from "./pandoc-filter.ts";
+import { Make } from "./type-computations.ts";
 
-export type Porcelain = {
-  [P in keyof EltMapKeys]: Make<Pick<EltMapKeys, P>, Pick<EltMap, P>> & {
+type EltPorcelainMap = {
+  [P in EltType]: Make<Pick<EltMapKeys, P>, Pick<EltMap, P>> & {
     t: P;
   };
 };
+
+export type EltPorcelain<A extends EltType> = EltPorcelainMap[A];
 
 //deno-lint-ignore no-explicit-any
 export function fromPorcelain(v: any): any {
@@ -117,6 +118,9 @@ const TargetMap = ["target", "title"];
 type TargetMap = ["target", "title"];
 
 export type EltMapKeys = {
+  any: undefined;
+  unknown: undefined;
+
   Str: "v";
   Emph: "content";
   Strong: "content";
@@ -153,9 +157,13 @@ export type EltMapKeys = {
   // Table: table seems wrong wrt to https://pandoc.org/lua-filters.html#type-table
   Div: [AttrMap, "content"];
   Null: undefined;
+
+  Table: ["content"]; // this is broken
 };
 
 export const EltMapKeys = {
+  any: undefined,
+  unknown: undefined,
   Str: "v",
   Emph: "content",
   Strong: "content",
@@ -190,6 +198,8 @@ export const EltMapKeys = {
 
   Div: [AttrMap, "content"],
   Null: undefined,
+
+  Table: ["content"], // FIXME this is broken
 };
 
 /*

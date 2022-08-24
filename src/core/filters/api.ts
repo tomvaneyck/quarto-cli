@@ -1,4 +1,4 @@
-import { PandocNode, Walker, walker } from "./walk.ts";
+import { PandocNode, walker, WalkerPlain, WalkerPorcelain } from "./walk.ts";
 import { globals } from "./globals.ts";
 import format from "./format.ts";
 
@@ -6,7 +6,7 @@ export const filterAPI = {
   utils: {
     stringify: (v: PandocNode) => {
       const strs: string[] = [];
-      walker({
+      walker<WalkerPlain>({
         Str(v) {
           strs.push(v.c);
         },
@@ -17,7 +17,7 @@ export const filterAPI = {
       return strs.join("");
     },
   },
-  run(filter: ((v: unknown) => unknown) | Walker) {
+  run(filter: ((v: unknown) => unknown) | WalkerPorcelain | WalkerPlain) {
     if (typeof filter === "function") {
       this.emit(filter(this.doc()));
     } else {
