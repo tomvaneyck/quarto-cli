@@ -1,4 +1,6 @@
 import { PandocNode, Walker, walker } from "./walk.ts";
+import { globals } from "./globals.ts";
+import format from "./format.ts";
 
 export const filterAPI = {
   utils: {
@@ -34,10 +36,18 @@ export const filterAPI = {
     if (typeof msg === "string") {
       write(msg);
       // deno-lint-ignore no-explicit-any
-    } else if ((msg as any).t !== "undefined") {
+    } else if (msg && (msg as any).t !== "undefined") {
       write(JSON.stringify(msg, null, 2));
     } else {
-      write(String(msg));
+      try {
+        write(JSON.stringify(msg, null, 2));
+      } catch (_e) {
+        write(String(msg));
+      }
     }
+    write("\n");
   },
+  pandocGlobals: globals,
+  format: format,
 };
+export default filterAPI;

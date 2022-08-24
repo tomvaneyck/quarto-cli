@@ -69,11 +69,33 @@ local function tcontains(t, value)
   return false
 end
 
+function pandoc_globals()
+  -- from https://pandoc.org/lua-filters.html#global-variables
+  -- every other global besides FORMAT doesn't seem
+  -- to serialize correctly, so instead we pluck only the
+  -- fields we need
+
+  local globals = {
+    FORMAT = FORMAT,
+    PANDOC_WRITER_OPTIONS = {
+      extensions = PANDOC_WRITER_OPTIONS.extensions
+    }
+  }
+  quarto.utils.dump(globals)
+  local result = quarto.json.encode(globals)
+
+  tmp = io.open("/tmp/lua-globals.json", "wb")
+  tmp:write(result)
+  tmp:close()
+end
+
 function typescriptFilter(path)
   return {
     Pandoc = function(doc)
       local filter = quarto.utils.resolvePath(path)
       local denoPath = param("deno-path")
+
+      pandoc_globals()
       local result = pandoc.utils.run_json_filter(doc, denoPath, {
         "run", "--cached-only", "--unstable", "--allow-all", "--no-config", os.getenv("QUARTO_IMPORT_MAP"), filter 
       })
