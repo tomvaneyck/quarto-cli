@@ -12,7 +12,13 @@ import * as ld from "../../../core/lodash.ts";
 import { dirAndStem, pathWithForwardSlashes } from "../../../core/path.ts";
 
 import { ProjectContext } from "../../types.ts";
-import { Navbar, NavItem, Sidebar, SidebarItem } from "../../types.ts";
+import {
+  Navbar,
+  NavigationFooter,
+  NavItem,
+  Sidebar,
+  SidebarItem,
+} from "../../types.ts";
 import {
   kBodyFooter,
   kBodyHeader,
@@ -34,6 +40,7 @@ import {
 import { cookieConsentEnabled } from "./website-analytics.ts";
 import { Format, FormatExtras } from "../../../config/types.ts";
 import { kPageTitle, kTitle, kTitlePrefix } from "../../../config/constants.ts";
+export { type NavigationFooter } from "../../types.ts";
 
 export interface Navigation {
   navbar?: Navbar;
@@ -42,14 +49,6 @@ export interface Navigation {
   footer?: NavigationFooter;
   pageMargin?: PageMargin;
   bodyDecorators?: BodyDecorators;
-}
-
-export interface NavigationFooter {
-  background?: string;
-  border?: string;
-  left?: string | (NavItem | string)[];
-  center?: string | (NavItem | string)[];
-  right?: string | (NavItem | string)[];
 }
 
 export interface NavigationPagination {
@@ -129,6 +128,21 @@ export function websiteNavigationConfig(project: ProjectContext) {
 
     if (sidebars[0].tools === undefined) {
       sidebars[0].tools = [];
+    }
+
+    // convert contents: auto into items
+    for (const sb of sidebars) {
+      if (sb.contents && !Array.isArray(sb.contents)) {
+        if (typeof (sb.contents) === "string") {
+          if (sb.contents === "auto") {
+            sb.contents = [{ auto: true }];
+          } else {
+            sb.contents = [{ auto: sb.contents }];
+          }
+        } else {
+          sb.contents = [sb.contents as SidebarItem];
+        }
+      }
     }
   }
 

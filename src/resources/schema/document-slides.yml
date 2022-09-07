@@ -63,6 +63,9 @@
   schema:
     object:
       properties:
+        data-background-color:
+          string:
+            description: CSS color for title slide background
         data-background-image:
           string:
             description: URL or path to the background image.

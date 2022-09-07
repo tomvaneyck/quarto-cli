@@ -12,7 +12,23 @@ import { isRStudio } from "../core/platform.ts";
 import { findOpenPort, kLocalhost, waitForPort } from "../core/port.ts";
 import { TempContext } from "../core/temp-types.ts";
 
+import {
+  NavigationItem as NavItem,
+  NavigationItemObject,
+  NavigationItemObject as SidebarTool,
+  ProjectConfig as ProjectConfig_Project,
+  ProjectPreview,
+} from "../resources/types/schema-types.ts";
+export {
+  type NavigationItem as NavItem,
+  type NavigationItemObject,
+  type NavigationItemObject as SidebarTool,
+  type PageFooter as NavigationFooter,
+  type ProjectPreview,
+} from "../resources/types/schema-types.ts";
+
 export const kProjectType = "type";
+export const kProjectTitle = "title";
 export const kProjectRender = "render";
 export const kProjectPreRender = "pre-render";
 export const kProjectPostRender = "post-render";
@@ -45,27 +61,8 @@ export interface ProjectFiles {
 }
 
 export interface ProjectConfig {
-  project: {
-    [kProjectType]?: string;
-    [kProjectRender]?: string[];
-    [kProjectPreRender]?: string[];
-    [kProjectPostRender]?: string[];
-    [kProjectExecuteDir]?: "file" | "project";
-    [kProjectOutputDir]?: string;
-    [kProjectLibDir]?: string;
-    [kProjectResources]?: string[];
-    preview?: ProjectPreview;
-  };
+  project: ProjectConfig_Project;
   [key: string]: unknown;
-}
-
-export interface ProjectPreview {
-  port?: number;
-  host?: string;
-  browser?: boolean;
-  [kProjectWatchInputs]?: boolean;
-  navigate?: boolean;
-  timeout?: number;
 }
 
 export async function resolvePreviewOptions(
@@ -124,8 +121,8 @@ export interface Navbar {
     | "light"
     | "dark";
   search?: boolean | string;
-  left?: NavbarItem[];
-  right?: NavbarItem[];
+  left?: NavItem[];
+  right?: NavItem[];
   collapse?: boolean;
   tools?: SidebarTool[];
   pinned?: boolean;
@@ -135,7 +132,7 @@ export interface Navbar {
   readerToggle?: boolean;
 }
 
-export interface NavItem {
+/* export interface NavItem {
   // href + more readable/understndable aliases
   icon?: string;
   href?: string;
@@ -143,15 +140,14 @@ export interface NavItem {
   text?: string;
   url?: string;
   [kAriaLabel]?: string;
-}
 
-export interface NavbarItem extends NavItem {
   // core identification
   id?: string;
 
   // more
-  menu?: NavbarItem[];
+  menu?: NavItem[];
 }
+ */
 
 export interface Sidebar {
   id?: string;
@@ -180,7 +176,7 @@ export interface Sidebar {
   footer?: Array<string> | string;
 }
 
-export interface SidebarItem extends NavItem {
+export type SidebarItem = NavigationItemObject & {
   // core structure/contents
   section?: string;
   sectionId?: string;
@@ -189,16 +185,19 @@ export interface SidebarItem extends NavItem {
   // more
   expanded?: boolean;
   active?: boolean;
-}
 
-export interface SidebarTool {
+  // transient properties used for expanding 'auto'
+  auto?: boolean | string | string[];
+};
+
+/*export interface SidebarTool {
   // label/contents
   icon?: string;
   text?: string;
-  menu?: NavbarItem[];
+  menu?: NavItem[];
 
   // href + more readable/understndable aliases
   href?: string;
   file?: string;
   url?: string;
-}
+}*/

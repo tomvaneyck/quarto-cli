@@ -31,7 +31,10 @@ import {
   jupyterHubUser,
   vsCodeServerProxyUri,
 } from "../../core/platform.ts";
-import { isProjectInputFile } from "../../project/project-shared.ts";
+import {
+  isProjectInputFile,
+  projectExcludeDirs,
+} from "../../project/project-shared.ts";
 
 import {
   initState,
@@ -99,11 +102,14 @@ export async function render(
     ? await engine.partitionedMarkdown(path)
     : undefined;
 
+  const excludeDirs = context ? projectExcludeDirs(context) : [];
+
   // return files
   return {
     files: await Promise.all(result.files.map(async (file) => {
       const resourceFiles = await resourceFilesFromRenderedFile(
         dirname(path),
+        excludeDirs,
         file,
         partitioned,
       );
@@ -162,7 +168,13 @@ export async function printBrowsePreviewMessage(
   port: number,
   path: string,
 ) {
-  if (isVSCodeTerminal() && isVSCodeServer()) {
+  if (
+    (isJupyterServer() || isVSCodeTerminal()) && isRStudioWorkbench()
+  ) {
+    const url = await rswURL(port, path);
+    info(`\nPreview server: ${previewURL(host, port, path = "")}`);
+    info(`\nBrowse at ${url}`, { format: colors.green });
+  } else if (isVSCodeTerminal() && isVSCodeServer()) {
     const browseUrl = vsCodeServerProxyUri()!.replace("{{port}}", `${port}`) +
       "/" + path;
     info(`\nBrowse at ${browseUrl}`, { format: colors.green });
@@ -176,12 +188,6 @@ export async function printBrowsePreviewMessage(
         format: colors.green,
       },
     );
-  } else if (
-    (isJupyterServer() || isVSCodeTerminal()) && isRStudioWorkbench()
-  ) {
-    const url = await rswURL(port, path);
-    info(`\nPreview server: ${previewURL(host, port, path = "")}`);
-    info(`\nBrowse at ${url}`, { format: colors.green });
   } else {
     const url = previewURL(host, port, path);
     if (!isRStudioServer()) {

@@ -123,13 +123,15 @@ export function filterPaths(
   root: string,
   paths: string[],
   globs: string[],
+  options?: GlobOptions,
 ): ResolvedPathGlobs {
   // filter the list of globs
   // using the paths
   const expandGlobs = (targetGlobs: string[]) => {
     const expanded: string[] = [];
     for (const glob of targetGlobs) {
-      const regex = globToRegExp(`${root}/${glob}`);
+      const needSlash = !root.endsWith("/") && !glob.startsWith("/");
+      const regex = globToRegExp(`${root}${needSlash ? "/" : ""}${glob}`);
       const matchingFiles = paths.filter((path) => {
         return regex.test(path);
       });
@@ -137,7 +139,7 @@ export function filterPaths(
     }
     return ld.uniq(expanded);
   };
-  return resolveGlobs(root, globs, expandGlobs);
+  return resolveGlobs(root, globs, expandGlobs, options);
 }
 
 export interface GlobOptions {
@@ -245,7 +247,7 @@ export function resolveGlobs(
         return glob;
       }
     } else {
-      return join(root, glob.slice(1));
+      return glob.slice(1);
     }
   };
 

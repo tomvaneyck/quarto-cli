@@ -1,4 +1,4 @@
-// @quarto/quarto-ojs-runtime v0.0.12 Copyright 2022 undefined
+// @quarto/quarto-ojs-runtime v0.0.13 Copyright 2022 undefined
 var EOL = {},
     EOF = {},
     QUOTE = 34,
@@ -18852,7 +18852,11 @@ function createRuntime() {
   // Right now we support quarto's standard HTML formats
 
   const mainEl = (document.querySelector("main") // html
+<<<<<<< HEAD
    || document.querySelector("div.slides")       // reveal
+=======
+   || document.querySelector("div.reveal")       // reveal
+>>>>>>> main
    || document.querySelector("body"));           // fall-through
 
   function width() {

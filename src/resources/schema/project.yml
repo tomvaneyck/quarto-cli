@@ -2,7 +2,10 @@
   description: Project configuration.
   schema:
     object:
+      closed: true
       properties:
+        title:
+          schema: string
         type:
           enum: [default, website, book, site]
           completions: [default, website, book]
@@ -33,6 +36,14 @@
           description: Options for `quarto preview`
           schema:
             ref: project-preview
+        pre-render:
+          description: "Scripts to run as a pre-render step"
+          schema:
+            maybeArrayOf: string
+        post-render:
+          description: "Scripts to run as a post-render step"
+          schema:
+            maybeArrayOf: string
 
 - name: website
   description: Website configuration.
@@ -104,6 +115,11 @@
             schema:
               ref: navigation-item
             description: "Custom tools for navbar or sidebar"
+        doi:
+          string:
+            tags:
+              formats: [$html-doc]
+            description: The Digital Object Identifier for this book.
 
 - name: type
   hidden: true
