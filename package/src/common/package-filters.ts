@@ -5,8 +5,8 @@
 *
 */
 import { dirname, join } from "path/mod.ts";
-import { ensureDirSync } from "fs/mod.ts";
 import { info } from "log/mod.ts";
+import { safeEnsureDirSync } from "../../../src/core/path.ts";
 
 // Creates inlined version of the filters that can be distributed with our installer
 export function buildFilter(
@@ -44,7 +44,7 @@ export function buildFilter(
 
   const dir = dirname(output);
   info(`Ensure directory ${dir} exists`);
-  ensureDirSync(dir);
+  safeEnsureDirSync(dir);
 
   info(`Writing inlined ${output}`);
   Deno.writeTextFileSync(output, src);

@@ -7,8 +7,12 @@
 
 import { debug } from "log/mod.ts";
 import { join } from "path/mod.ts";
-import { ensureDirSync, existsSync } from "fs/mod.ts";
-import { removeIfExists, safeRemoveIfExists } from "./path.ts";
+import { existsSync } from "fs/mod.ts";
+import {
+  removeIfExists,
+  safeEnsureDirSync,
+  safeRemoveIfExists,
+} from "./path.ts";
 import { TempContext } from "./temp-types.ts";
 
 export type { TempContext } from "./temp-types.ts";
@@ -24,7 +28,7 @@ export function initSessionTempDir() {
   if (tmpEnv) {
     try {
       if (!existsSync(tmpEnv)) {
-        ensureDirSync(tmpEnv);
+        safeEnsureDirSync(tmpEnv);
       }
     } catch (err) {
       if (err.message) {
@@ -77,7 +81,7 @@ export function createTempContext(options?: Deno.MakeTempOptions) {
 
 export function systemTempDir(name: string) {
   const dir = join(rootTempDir(), name);
-  ensureDirSync(dir);
+  safeEnsureDirSync(dir);
   return dir;
 }
 

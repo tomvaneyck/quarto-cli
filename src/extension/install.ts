@@ -5,7 +5,7 @@
 *
 */
 
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 import { Confirm } from "cliffy/prompt/mod.ts";
 import { Table } from "cliffy/table/mod.ts";
 import { basename, dirname, join } from "path/mod.ts";
@@ -20,6 +20,7 @@ import { downloadWithProgress } from "../core/download.ts";
 import { createExtensionContext, readExtensions } from "./extension.ts";
 import { info } from "log/mod.ts";
 import { ExtensionSource, extensionSource } from "./extension-host.ts";
+import { safeEnsureDirSync } from "../core/path.ts";
 
 const kUnversionedFrom = "  (?)";
 const kUnversionedTo = "(?)  ";
@@ -172,7 +173,7 @@ async function stageExtension(
   if (source.type === "remote") {
     // Stages a remote file by downloading and unzipping it
     const archiveDir = join(workingDir, "archive");
-    ensureDirSync(archiveDir);
+    safeEnsureDirSync(archiveDir);
 
     // The filename
     const filename = (typeof (source.resolvedTarget) === "string"
@@ -259,7 +260,7 @@ export async function copyExtensions(
   const finalExtensionTargetDir = source.owner
     ? join(finalExtensionsDir, source.owner)
     : finalExtensionsDir;
-  ensureDirSync(finalExtensionTargetDir);
+  safeEnsureDirSync(finalExtensionTargetDir);
 
   // Move extensions into the target directory (root or owner)
   await readAndCopyExtensions(srcDir, finalExtensionTargetDir);

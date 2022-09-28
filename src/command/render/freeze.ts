@@ -13,14 +13,19 @@ import {
   join,
   relative,
 } from "path/mod.ts";
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 
 import { cloneDeep } from "../../core/lodash.ts";
 
 import { inputFilesDir } from "../../core/render.ts";
 import { TempContext } from "../../core/temp.ts";
 import { md5Hash } from "../../core/hash.ts";
-import { removeIfEmptyDir, removeIfExists, safeRemoveIfExists } from "../../core/path.ts";
+import {
+  removeIfEmptyDir,
+  removeIfExists,
+  safeEnsureDirSync,
+  safeRemoveIfExists,
+} from "../../core/path.ts";
 
 import {
   kIncludeAfterBody,
@@ -134,7 +139,7 @@ export function projectFreezerDir(dir: string, hidden: boolean) {
   const freezeDir = hidden
     ? projectScratchPath(dir, kProjectFreezeDir)
     : join(dir, kProjectFreezeDir);
-  ensureDirSync(freezeDir);
+  safeEnsureDirSync(freezeDir);
   return Deno.realPathSync(freezeDir);
 }
 
@@ -152,7 +157,7 @@ export function copyToProjectFreezer(
       if (dir.name === kFreezeExecuteResults) {
         const resultsDir = join(srcFilesDir, dir.name);
         const destResultsDir = join(destFilesDir, kFreezeExecuteResults);
-        ensureDirSync(destResultsDir);
+        safeEnsureDirSync(destResultsDir);
         for (const json of Deno.readDirSync(resultsDir)) {
           if (json.isFile) {
             copyTo(
@@ -258,7 +263,7 @@ export function freezeResultFile(
   const filesDir = join(dirname(input), inputFilesDir(input));
   const freezeDir = join(filesDir, kFreezeExecuteResults);
   if (ensureDir) {
-    ensureDirSync(freezeDir);
+    safeEnsureDirSync(freezeDir);
   }
 
   return join(freezeDir, extname(output).slice(1) + ".json");

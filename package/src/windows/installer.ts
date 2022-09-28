@@ -1,6 +1,6 @@
 import { info, warning } from "log/mod.ts";
 import { basename, dirname, join } from "path/mod.ts";
-import { emptyDirSync, ensureDirSync, existsSync, moveSync } from "fs/mod.ts";
+import { emptyDirSync, existsSync, moveSync } from "fs/mod.ts";
 
 import { Configuration } from "../common/config.ts";
 import { runCmd } from "../util/cmd.ts";
@@ -8,6 +8,7 @@ import { download, getEnv, unzip } from "../util/utils.ts";
 import { signtool } from "./signtool.ts";
 import { execProcess } from "../../../src/core/process.ts";
 import { copySync } from "fs/copy.ts";
+import { safeEnsureDirSync } from "../../../src/core/path.ts";
 
 export async function makeInstallerWindows(configuration: Configuration) {
   const packageName = `quarto-${configuration.version}-win.msi`;
@@ -41,7 +42,7 @@ export async function makeInstallerWindows(configuration: Configuration) {
     !existsSync(heatCmd + ".exe")
   ) {
     emptyDirSync(workingDir);
-    ensureDirSync(wixDir);
+    safeEnsureDirSync(wixDir);
 
     const fileName = `wix${wixShortVersion}-binaries.zip`;
     const wixToolsUrl =

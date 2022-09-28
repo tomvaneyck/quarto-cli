@@ -5,10 +5,10 @@
 *
 */
 import { dirname, join, SEP } from "path/mod.ts";
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 import { info, warning } from "log/mod.ts";
 
-import { expandPath } from "../../../src/core/path.ts";
+import { expandPath, safeEnsureDirSync } from "../../../src/core/path.ts";
 import {
   createDevConfig,
   writeDevConfig,
@@ -117,7 +117,7 @@ export async function configure(
 
         // Create new symlink
         try {
-          ensureDirSync(dirname(symlinkPath) + SEP);
+          safeEnsureDirSync(dirname(symlinkPath) + SEP);
 
           Deno.symlinkSync(
             join(config.directoryInfo.bin, "quarto"),

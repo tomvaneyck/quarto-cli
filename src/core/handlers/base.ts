@@ -68,10 +68,10 @@ import {
 import { DirectiveCell } from "../lib/break-quarto-md-types.ts";
 import { basename, dirname, join, relative, resolve } from "path/mod.ts";
 import { figuresDir, inputFilesDir } from "../render.ts";
-import { ensureDirSync } from "fs/mod.ts";
 import { mappedStringFromFile } from "../mapped-text.ts";
 import { error } from "log/mod.ts";
 import { withCriClient } from "../cri/cri.ts";
+import { safeEnsureDirSync } from "../path.ts";
 /* import {
   extractHtmlFromElements,
   extractImagesFromElements,
@@ -252,7 +252,7 @@ function makeHandlerContext(
         filesDir,
         figuresDir(context.options.format.pandoc.to),
       );
-      ensureDirSync(result);
+      safeEnsureDirSync(result);
       return result;
     },
     addHtmlDependency(

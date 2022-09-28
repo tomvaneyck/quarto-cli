@@ -10,8 +10,8 @@ import * as colors from "fmt/colors.ts";
 
 import { basename, dirname, join } from "path/mod.ts";
 import { writeAll } from "io/mod.ts";
-import { ensureDirSync } from "fs/mod.ts";
 import { pandocAutoIdentifier } from "../../core/pandoc/pandoc-id.ts";
+import { safeEnsureDirSync } from "../../core/path.ts";
 
 const kObservableSiteUrl = "https://observablehq.com/";
 const kObservableApiUrl = "https://api.observablehq.com/";
@@ -75,7 +75,7 @@ export async function observableNotebookToMarkdown(
     outputFile = join(outputDir, file + ".qmd");
   }
 
-  ensureDirSync(outputDir);
+  safeEnsureDirSync(outputDir);
   info(
     `Writing to ${
       nb.files.length > 0

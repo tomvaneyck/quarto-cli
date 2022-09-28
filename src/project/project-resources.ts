@@ -5,12 +5,16 @@
 *
 */
 
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 import { dirname, extname, join, relative } from "path/mod.ts";
 import * as ld from "../core/lodash.ts";
 import { asArray } from "../core/array.ts";
 
-import { resolvePathGlobs, safeExistsSync } from "../core/path.ts";
+import {
+  resolvePathGlobs,
+  safeEnsureDirSync,
+  safeExistsSync,
+} from "../core/path.ts";
 import { kCssImportRegex, kCssUrlRegex } from "../core/css.ts";
 
 import {
@@ -67,7 +71,7 @@ export function copyResourceFile(
     return;
   }
 
-  ensureDirSync(dirname(destFile));
+  safeEnsureDirSync(dirname(destFile));
   copyFileIfNewer(srcFile, destFile);
 
   if (extname(srcFile).toLowerCase() === ".css") {

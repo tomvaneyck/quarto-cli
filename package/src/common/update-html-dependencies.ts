@@ -4,7 +4,7 @@
 * Copyright (C) 2020 by RStudio, PBC
 *
 */
-import { ensureDir, ensureDirSync, existsSync } from "fs/mod.ts";
+import { ensureDir, existsSync } from "fs/mod.ts";
 import { copySync } from "fs/copy.ts";
 import { info } from "log/mod.ts";
 import { dirname, extname, join } from "path/mod.ts";
@@ -16,6 +16,7 @@ import { download, unzip } from "../util/utils.ts";
 import { Configuration } from "./config.ts";
 import { visitLines } from "../../../src/core/file.ts";
 import { copyMinimal } from "../../../src/core/copy.ts";
+import { safeEnsureDirSync } from "../../../src/core/path.ts";
 
 export async function updateHtmlDepedencies(config: Configuration) {
   info("Updating Bootstrap with version info:");
@@ -115,7 +116,7 @@ export async function updateHtmlDepedencies(config: Configuration) {
         "locale",
       );
       const targetDir = join(dayJsDir, "locale");
-      ensureDirSync(targetDir);
+      safeEnsureDirSync(targetDir);
 
       const files = Deno.readDirSync(sourceDir);
       for (const file of files) {
@@ -171,7 +172,7 @@ export async function updateHtmlDepedencies(config: Configuration) {
     "LIST_JS",
     workingDir,
     (dir: string, version: string) => {
-      ensureDirSync(dirname(listJs));
+      safeEnsureDirSync(dirname(listJs));
       // Copy the js file
       Deno.copyFileSync(
         join(dir, `list.js-${version}`, "dist", "list.min.js"),
@@ -188,7 +189,7 @@ export async function updateHtmlDepedencies(config: Configuration) {
     "ZENSCROLL_JS",
     workingDir,
     (dir: string, version: string) => {
-      ensureDirSync(dirname(zenscrollJs));
+      safeEnsureDirSync(dirname(zenscrollJs));
       // Copy the js file
       Deno.copyFileSync(
         join(dir, `zenscroll-${version}`, "zenscroll-min.js"),
@@ -223,7 +224,7 @@ export async function updateHtmlDepedencies(config: Configuration) {
     workingDir,
     (dir: string, version: string) => {
       // Copy the js file
-      ensureDirSync(dirname(fuseJs));
+      safeEnsureDirSync(dirname(fuseJs));
       Deno.copyFileSync(
         join(dir, `Fuse-${version}`, "dist", "fuse.min.js"),
         fuseJs,
@@ -252,7 +253,7 @@ export async function updateHtmlDepedencies(config: Configuration) {
       if (existsSync(revealJs)) {
         Deno.removeSync(revealJs, { recursive: true });
       }
-      ensureDirSync(revealJs);
+      safeEnsureDirSync(revealJs);
 
       info("Copying css/");
       copySync(join(dir, `reveal.js-${version}`, "css"), join(revealJs, "css"));
@@ -292,7 +293,7 @@ export async function updateHtmlDepedencies(config: Configuration) {
     "REVEAL_JS_CHALKBOARD",
     workingDir,
     (dir: string, version: string) => {
-      ensureDirSync(dirname(revealJsChalkboard));
+      safeEnsureDirSync(dirname(revealJsChalkboard));
       copyMinimal(
         join(dir, `reveal.js-plugins-${version}`, "chalkboard"),
         revealJsChalkboard,
@@ -317,7 +318,7 @@ export async function updateHtmlDepedencies(config: Configuration) {
     workingDir,
     (dir: string, version: string) => {
       // Copy the js file (modify to disable loadResource)
-      ensureDirSync(revealJsMenu);
+      safeEnsureDirSync(revealJsMenu);
       const menuJs = Deno.readTextFileSync(
         join(dir, `reveal.js-menu-${version}`, "menu.js"),
       )
@@ -358,7 +359,7 @@ export async function updateHtmlDepedencies(config: Configuration) {
     "REVEAL_JS_PDFEXPORT",
     workingDir,
     (dir: string, version: string) => {
-      ensureDirSync(revealJsPdfExport);
+      safeEnsureDirSync(revealJsPdfExport);
       Deno.copyFileSync(
         join(dir, `reveal-pdfexport-${version}`, "pdfexport.js"),
         join(revealJsPdfExport, "pdfexport.js"),
@@ -416,12 +417,12 @@ export async function updateHtmlDepedencies(config: Configuration) {
     if (existsSync(dir)) {
       Deno.removeSync(dir, { recursive: true });
     }
-    ensureDirSync(dir);
+    safeEnsureDirSync(dir);
   });
 
   const workingSubDir = (name: string) => {
     const dir = join(workingDir, name);
-    ensureDirSync(dir);
+    safeEnsureDirSync(dir);
     return dir;
   };
 
@@ -469,7 +470,7 @@ async function updatePdfJs(
 
   // Download and unzip the release
   const pdfjsDir = join(working, "pdfjs");
-  ensureDirSync(pdfjsDir);
+  safeEnsureDirSync(pdfjsDir);
 
   info(`Downloading ${distUrl}`);
   await download(distUrl, zipFile);
@@ -708,7 +709,7 @@ async function updateUnpkgDependency(
     const url = `https://unpkg.com/${pkg}@${version}/${filename}`;
 
     info(`Downloading ${url} to ${target}`);
-    ensureDirSync(dirname(target));
+    safeEnsureDirSync(dirname(target));
     await download(url, target);
     info("done\n");
   } else {
@@ -728,7 +729,7 @@ async function updateJsDelivrDependency(
     const url = `https://cdn.jsdelivr.net/npm/${pkg}@${version}/${filename}`;
 
     info(`Downloading ${url} to ${target}`);
-    ensureDirSync(dirname(target));
+    safeEnsureDirSync(dirname(target));
     await download(url, target);
     info("done\n");
   } else {

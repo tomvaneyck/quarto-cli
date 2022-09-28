@@ -5,7 +5,6 @@
 *
 */
 
-import { ensureDirSync } from "fs/mod.ts";
 import { dirname } from "path/mod.ts";
 import * as colors from "fmt/colors.ts";
 import * as log from "log/mod.ts";
@@ -18,6 +17,7 @@ import { Args } from "flags/mod.ts";
 import { lines } from "./text.ts";
 import { error, getLogger, setup, warning } from "log/mod.ts";
 import { asErrorEx } from "./lib/error.ts";
+import { safeEnsureDirSync } from "./path.ts";
 
 export type LogLevel = "DEBUG" | "INFO" | "WARNING" | "ERROR";
 
@@ -73,7 +73,7 @@ export function logOptions(args: Args) {
   const logOptions: LogOptions = {};
   logOptions.log = args.l || args.log || Deno.env.get("QUARTO_LOG");
   if (logOptions.log) {
-    ensureDirSync(dirname(logOptions.log));
+    safeEnsureDirSync(dirname(logOptions.log));
   }
   logOptions.level = args.ll || args["log-level"] ||
     Deno.env.get("QUARTO_LOG_LEVEL");

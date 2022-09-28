@@ -6,7 +6,7 @@
 */
 
 import * as ld from "../core/lodash.ts";
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 import { basename, dirname, join } from "path/mod.ts";
 import { info } from "log/mod.ts";
 
@@ -26,6 +26,7 @@ import { projectConfigFile } from "./project-shared.ts";
 import { ensureGitignore } from "./project-gitignore.ts";
 import { kWebsite } from "./types/website/website-constants.ts";
 import { copyTo } from "../core/copy.ts";
+import { safeEnsureDirSync } from "../core/path.ts";
 
 export interface ProjectCreateOptions {
   dir: string;
@@ -52,7 +53,7 @@ export async function projectCreate(options: ProjectCreateOptions) {
   }
 
   // ensure that the directory exists
-  ensureDirSync(options.dir);
+  safeEnsureDirSync(options.dir);
 
   options.dir = Deno.realPathSync(options.dir);
   info(`Creating project at `, { newline: false });
@@ -132,7 +133,7 @@ export async function projectCreate(options: ProjectCreateOptions) {
         displayName = supporting.to;
       }
 
-      ensureDirSync(dirname(dest));
+      safeEnsureDirSync(dirname(dest));
       copyTo(src, dest);
       info("- Created " + displayName, { indent: 2 });
     }
@@ -232,7 +233,7 @@ function projectMarkdownFile(
   const ensureSubDir = (dir: string, name: string, subdirectory?: string) => {
     if (subdirectory) {
       const newDir = join(dir, subdirectory);
-      ensureDirSync(newDir);
+      safeEnsureDirSync(newDir);
       return join(newDir, name);
     } else {
       return join(dir, name);

@@ -6,11 +6,11 @@
 */
 import { Command } from "cliffy/command/mod.ts";
 import { basename, join } from "path/mod.ts";
-import { ensureDirSync } from "fs/mod.ts";
 import { info } from "log/mod.ts";
 
 import { Configuration, readConfiguration } from "../common/config.ts";
 import { compile, install, updateDenoPath } from "../util/deno.ts";
+import { safeEnsureDirSync } from "../../../src/core/path.ts";
 
 export function compileQuartoLatexmkCommand() {
   return new Command()
@@ -135,7 +135,7 @@ export async function compileQuartoLatexmk(
         outputName,
         target,
       );
-      ensureDirSync(outputDir);
+      safeEnsureDirSync(outputDir);
       const output = join(outputDir, filename(outputName, target));
 
       await compile(

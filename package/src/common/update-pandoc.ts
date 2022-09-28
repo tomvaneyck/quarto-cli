@@ -6,7 +6,6 @@
 */
 import { Command } from "cliffy/command/mod.ts";
 import { dirname, join } from "path/mod.ts";
-import { ensureDirSync } from "fs/mod.ts";
 import { info } from "log/mod.ts";
 
 import {
@@ -20,6 +19,7 @@ import { archiveBinaryDependency } from "./archive-binary-dependencies.ts";
 
 import { execProcess } from "../../../src/core/process.ts";
 import { configureDependency } from "./dependencies/dependencies.ts";
+import { safeEnsureDirSync } from "../../../src/core/path.ts";
 
 export function updatePandoc() {
   return new Command()
@@ -91,7 +91,7 @@ async function writePandocTemplates(config: Configuration) {
     info(`> ${temp.pandoc}`);
     const template = await readTemplate(temp.pandoc, binPath);
     if (template) {
-      ensureDirSync(dirname(temp.output));
+      safeEnsureDirSync(dirname(temp.output));
       Deno.writeTextFileSync(temp.output, template);
     } else {
       throw new Error("Failed to read an expected template.");

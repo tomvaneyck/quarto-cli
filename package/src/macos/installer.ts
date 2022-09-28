@@ -11,13 +11,14 @@
 // TODO: Bundle and package Identifier - same or different?
 
 import { dirname, join } from "path/mod.ts";
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 import { error, info, warning } from "log/mod.ts";
 
 import { Configuration } from "../common/config.ts";
 import { runCmd } from "../util/cmd.ts";
 import { getEnv } from "../util/utils.ts";
 import { makeTarball } from "../util/tar.ts";
+import { safeEnsureDirSync } from "../../../src/core/path.ts";
 
 // Packaging specific configuration
 // (Some things are global others may be platform specific)
@@ -59,7 +60,7 @@ export async function makeInstallerMac(config: Configuration) {
   }
 
   // Make the output dir
-  ensureDirSync(dirname(packagePath));
+  safeEnsureDirSync(dirname(packagePath));
 
   // The application cert developer Id
   const applicationDevId = getEnv("QUARTO_APPLE_APP_DEV_ID", "");

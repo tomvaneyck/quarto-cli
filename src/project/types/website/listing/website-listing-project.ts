@@ -5,8 +5,8 @@
 *
 */
 
-import { ensureDirSync } from "fs/mod.ts";
 import { dirname, join } from "path/mod.ts";
+import { safeEnsureDirSync } from "../../../../core/path.ts";
 
 import { projectScratchPath } from "../../../project-scratch.ts";
 import { ProjectContext } from "../../../types.ts";
@@ -86,7 +86,7 @@ function readListingMap(project: ProjectContext) {
 
 function writeListingCache(project: ProjectContext, cache: ListingCache) {
   const file = projectListingMapFile(project.dir);
-  ensureDirSync(dirname(file));
+  safeEnsureDirSync(dirname(file));
   const mapJson = JSON.stringify(cache, undefined, 2);
   Deno.writeTextFileSync(file, mapJson);
 }

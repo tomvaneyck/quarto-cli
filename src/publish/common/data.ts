@@ -5,10 +5,11 @@
 *
 */
 
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 import { join } from "path/mod.ts";
 
 import { quartoDataDir } from "../../core/appdirs.ts";
+import { safeEnsureDirSync } from "../../core/path.ts";
 import { ProjectContext } from "../../project/types.ts";
 import { AccountToken, PublishProvider } from "../provider.ts";
 import { PublishRecord } from "../types.ts";
@@ -23,7 +24,7 @@ export function publishRecordsPath() {
 
 export function accountsDataDir() {
   const accountsDir = join(publishDataDir(), "accounts");
-  ensureDirSync(accountsDir);
+  safeEnsureDirSync(accountsDir);
   return accountsDir;
 }
 

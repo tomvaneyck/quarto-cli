@@ -7,9 +7,10 @@
 
 import { basename, dirname, join, relative, resolve } from "path/mod.ts";
 
-import { CopyOptions, ensureDirSync, existsSync, walkSync } from "fs/mod.ts";
+import { CopyOptions, existsSync, walkSync } from "fs/mod.ts";
 import { getFileInfoType, isSubdir } from "fs/_util.ts";
 import { isWindows } from "./platform.ts";
+import { safeEnsureDirSync } from "./path.ts";
 
 // emulate the Deno copySync funnction but read and write files manually
 // rather than calling Deno.copyFileSync (to avoid deno's attempt to
@@ -101,7 +102,7 @@ export function copyFileIfNewer(srcFile: string, destFile: string) {
   };
 
   // ensure target dir
-  ensureDirSync(dirname(destFile));
+  safeEnsureDirSync(dirname(destFile));
 
   // avoid copy if the file exists and we can validate that the src and dest
   // files have the same timestamp (there can be statSync errors in the case of
@@ -153,7 +154,7 @@ function copyDirSync(src: string, dest: string, options: CopyOptions): void {
   });
 
   if (!destStat) {
-    ensureDirSync(dest);
+    safeEnsureDirSync(dest);
   }
 
   if (options.preserveTimestamps) {

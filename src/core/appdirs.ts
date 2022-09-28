@@ -6,7 +6,7 @@
 */
 
 import { join } from "path/mod.ts";
-import { ensureDirSync } from "fs/mod.ts";
+import { safeEnsureDirSync } from "./path.ts";
 
 export function quartoDataDir(subdir?: string, roaming = false) {
   return quartoDir(userDataDir, subdir, roaming);
@@ -31,7 +31,7 @@ function quartoDir(
 ) {
   const dir = sourceFn("quarto", roaming);
   const fullDir = subdir ? join(dir, subdir) : dir;
-  ensureDirSync(fullDir);
+  safeEnsureDirSync(fullDir);
   return fullDir;
 }
 

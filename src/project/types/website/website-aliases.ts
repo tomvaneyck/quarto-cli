@@ -4,7 +4,7 @@
 * Copyright (C) 2020 by RStudio, PBC
 *
 */
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 import { dirname, extname, join, relative } from "path/mod.ts";
 
 import { ProjectOutputFile } from "../types.ts";
@@ -15,6 +15,7 @@ import { renderEjs } from "../../../core/ejs.ts";
 import { resourcePath } from "../../../core/resources.ts";
 import { inputTargetIndex, resolveInputTarget } from "../../project-index.ts";
 import { warning } from "log/mod.ts";
+import { safeEnsureDirSync } from "../../../core/path.ts";
 
 const kAliases = "aliases";
 
@@ -108,7 +109,7 @@ export async function updateAliases(
 
     // Make sure the directory exists
     if (!existsSync(targetFile)) {
-      ensureDirSync(dirname(targetFile));
+      safeEnsureDirSync(dirname(targetFile));
     }
 
     // Write the redirect file

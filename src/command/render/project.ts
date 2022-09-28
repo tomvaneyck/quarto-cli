@@ -5,7 +5,7 @@
 *
 */
 
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 import { dirname, isAbsolute, join, relative } from "path/mod.ts";
 import { info, warning } from "log/mod.ts";
 
@@ -49,6 +49,7 @@ import { inputFilesDir } from "../../core/render.ts";
 import {
   removeIfEmptyDir,
   removeIfExists,
+  safeEnsureDirSync,
   safeRemoveIfExists,
 } from "../../core/path.ts";
 import { handlerForScript } from "../../core/run/run.ts";
@@ -229,7 +230,7 @@ export async function renderProject(
   const outputDir = projResults.outputDir;
   const outputDirAbsolute = outputDir ? join(projDir, outputDir) : undefined;
   if (outputDirAbsolute) {
-    ensureDirSync(outputDirAbsolute);
+    safeEnsureDirSync(outputDirAbsolute);
   }
 
   // track the lib dir
@@ -273,7 +274,7 @@ export async function renderProject(
       }
       const srcDir = join(projDir, dir);
       if (existsSync(srcDir)) {
-        ensureDirSync(dirname(targetDir));
+        safeEnsureDirSync(dirname(targetDir));
         if (copy) {
           copyTo(srcDir, targetDir);
         } else {
@@ -293,7 +294,7 @@ export async function renderProject(
 
       // move the renderedFile to the output dir
       const outputFile = join(outputDirAbsolute, renderedFile.file);
-      ensureDirSync(dirname(outputFile));
+      safeEnsureDirSync(dirname(outputFile));
       Deno.renameSync(join(projDir, renderedFile.file), outputFile);
 
       // files dir

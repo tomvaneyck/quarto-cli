@@ -5,12 +5,13 @@
 *
 */
 import { join } from "path/mod.ts";
-import { emptyDirSync, ensureDirSync, walk } from "fs/mod.ts";
+import { emptyDirSync, walk } from "fs/mod.ts";
 import { copySync } from "fs/copy.ts";
 import { error, info } from "log/mod.ts";
 
 import { Configuration } from "../common/config.ts";
 import { runCmd } from "../util/cmd.ts";
+import { safeEnsureDirSync } from "../../../src/core/path.ts";
 
 export async function makeInstallerDeb(
   configuration: Configuration,
@@ -32,7 +33,7 @@ export async function makeInstallerDeb(
   // Prepare working directory
   const workingDir = join(configuration.directoryInfo.out, "working");
   info(`Preparing working directory ${workingDir}`);
-  ensureDirSync(workingDir);
+  safeEnsureDirSync(workingDir);
   emptyDirSync(workingDir);
 
   // Copy bin into the proper path in working dir
@@ -93,7 +94,7 @@ export async function makeInstallerDeb(
 
   // Place
   const debianDir = join(workingDir, "DEBIAN");
-  ensureDirSync(debianDir);
+  safeEnsureDirSync(debianDir);
 
   // Write the control file to the DEBIAN directory
   Deno.writeTextFileSync(join(debianDir, "control"), control);

@@ -5,7 +5,6 @@
 *
 */
 
-import { ensureDirSync } from "fs/mod.ts";
 import { join } from "path/mod.ts";
 import { Format } from "../../../config/types.ts";
 import {
@@ -13,7 +12,7 @@ import {
   getGithubDiscussionsMetadata,
   GithubDiscussionMetadata,
 } from "../../../core/giscus.ts";
-import { removeIfExists } from "../../../core/path.ts";
+import { removeIfExists, safeEnsureDirSync } from "../../../core/path.ts";
 import {
   kComments,
   kGiscus,
@@ -48,7 +47,7 @@ export async function resolveFormatForGiscus(
         let giscusMeta: GithubDiscussionMetadata;
         // The scratch directory used to cache metadata
         const giscusPath = projectScratchPath(project.dir, kGiscusDir);
-        ensureDirSync(giscusPath);
+        safeEnsureDirSync(giscusPath);
 
         // The path to the metadata file for this repo
         const path = join(

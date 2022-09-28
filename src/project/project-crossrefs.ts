@@ -5,7 +5,7 @@
 *
 */
 
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 
 import { basename, isAbsolute, join, relative } from "path/mod.ts";
 import {
@@ -15,7 +15,7 @@ import {
   kCrossrefChaptersAppendix,
 } from "../config/constants.ts";
 import { Metadata } from "../config/types.ts";
-import { pathWithForwardSlashes } from "../core/path.ts";
+import { pathWithForwardSlashes, safeEnsureDirSync } from "../core/path.ts";
 import { shortUuid } from "../core/uuid.ts";
 
 import { projectScratchPath } from "./project-scratch.ts";
@@ -41,7 +41,7 @@ export function crossrefIndexForOutputFile(
 
   // read (or create) main index
   const crossrefDir = projectScratchPath(projectDir, kCrossrefIndexDir);
-  ensureDirSync(crossrefDir);
+  safeEnsureDirSync(crossrefDir);
   const mainIndexFile = join(crossrefDir, "INDEX");
   const mainIndex: CrossrefIndex = existsSync(mainIndexFile)
     ? JSON.parse(Deno.readTextFileSync(mainIndexFile))

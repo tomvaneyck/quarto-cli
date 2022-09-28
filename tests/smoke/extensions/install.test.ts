@@ -2,8 +2,9 @@ import { noErrorsOrWarnings } from "../../verify.ts";
 import { join } from "path/mod.ts";
 import { ExecuteOutput, testQuartoCmd, Verify } from "../../test.ts";
 import { assert } from "testing/asserts.ts";
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 import { docs } from "../../utils.ts";
+import { safeEnsureDirSync } from "../../../src/core/path.ts";
 
 const verifySubDirCount = (dir: string, count: number): Verify => {
   return {
@@ -61,7 +62,7 @@ testQuartoCmd(
 
 // Verify use template using a remote github repo
 const templateDir = join(workingDir, "template");
-ensureDirSync(templateDir);
+safeEnsureDirSync(templateDir);
 testQuartoCmd(
   "use",
   ["template", "quarto-journals/jss", "--no-prompt"],

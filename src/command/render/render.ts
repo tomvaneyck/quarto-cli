@@ -5,7 +5,7 @@
 *
 */
 
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 
 import { basename, dirname, isAbsolute, join, relative } from "path/mod.ts";
 
@@ -18,7 +18,7 @@ import {
   resourcePath,
 } from "../../core/resources.ts";
 import { inputFilesDir } from "../../core/render.ts";
-import { pathWithForwardSlashes } from "../../core/path.ts";
+import { pathWithForwardSlashes, safeEnsureDirSync } from "../../core/path.ts";
 
 import { FormatPandoc } from "../../config/types.ts";
 import {
@@ -117,7 +117,7 @@ export async function renderPandoc(
   // (it could be in the _files dir). if its a single file book
   // though it can even be in a temp dir
   const mediabagDir = filesDirMediabagDir(context.target.source);
-  ensureDirSync(join(dirname(context.target.source), mediabagDir));
+  safeEnsureDirSync(join(dirname(context.target.source), mediabagDir));
 
   // pandoc options
   const pandocOptions: PandocOptions = {

@@ -6,10 +6,9 @@
 */
 
 import { dirname, isAbsolute, join, normalize, relative } from "path/mod.ts";
-import { ensureDirSync } from "fs/mod.ts";
 
 import { writeFileToStdout } from "../../core/console.ts";
-import { dirAndStem, expandPath } from "../../core/path.ts";
+import { dirAndStem, expandPath, safeEnsureDirSync } from "../../core/path.ts";
 import { texSafeFilename } from "../../core/tex.ts";
 
 import { kKeepTex, kOutputExt, kOutputFile } from "../../config/constants.ts";
@@ -87,7 +86,7 @@ export function texToPdfOutputRecipe(
 
         if (normalize(pdfOutput) !== normalize(outputPdf)) {
           // ensure the target directory exists
-          ensureDirSync(dirname(outputPdf));
+          safeEnsureDirSync(dirname(outputPdf));
 
           Deno.renameSync(pdfOutput, outputPdf);
         }

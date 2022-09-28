@@ -6,7 +6,7 @@
 */
 
 import { dirname, join } from "path/mod.ts";
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 import { copySync } from "fs/copy.ts";
 
 import { Configuration } from "../common/config.ts";
@@ -15,6 +15,7 @@ import { bundle } from "../util/deno.ts";
 import { info } from "log/mod.ts";
 import { buildAssets } from "../../../src/command/build-js/cmd.ts";
 import { initTreeSitter } from "../../../src/core/lib/yaml-validation/deno-init-tree-sitter.ts";
+import { safeEnsureDirSync } from "../../../src/core/path.ts";
 
 export async function prepareDist(
   config: Configuration,
@@ -116,7 +117,7 @@ function supportingFiles(config: Configuration) {
   filesToCopy.forEach((fileToCopy) => {
     const dir = dirname(fileToCopy.to);
     info(`Ensuring dir ${dir} exists`);
-    ensureDirSync(dir);
+    safeEnsureDirSync(dir);
 
     info(`Copying ${fileToCopy.from} to ${fileToCopy.to}`);
     copySync(fileToCopy.from, fileToCopy.to, { overwrite: true });

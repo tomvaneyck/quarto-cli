@@ -23,6 +23,7 @@ import * as ld from "./lodash.ts";
 
 import { getenv } from "./env.ts";
 import { execProcess } from "./process.ts";
+import { ensureDirSync } from "../vendor/deno.land/std@0.153.0/fs/ensure_dir.ts";
 
 export const kSkipHidden = /[/\\][\.]/;
 
@@ -37,6 +38,14 @@ export function safeRemoveIfExists(file: string) {
     removeIfExists(file);
   } catch (error) {
     warning(`Error removing file ${file}: ${error.message}`);
+  }
+}
+
+export function safeEnsureDirSync(dir: string) {
+  try {
+    ensureDirSync(dir);
+  } catch (error) {
+    console.log(error);
   }
 }
 

@@ -12,7 +12,7 @@ import {
 import { info } from "log/mod.ts";
 import { Confirm, Input } from "cliffy/prompt/mod.ts";
 import { basename, dirname, join, relative } from "path/mod.ts";
-import { ensureDir, ensureDirSync, existsSync } from "fs/mod.ts";
+import { ensureDir, existsSync } from "fs/mod.ts";
 import { TempContext } from "../../../core/temp-types.ts";
 import { downloadWithProgress } from "../../../core/download.ts";
 import { withSpinner } from "../../../core/console.ts";
@@ -23,6 +23,7 @@ import { initYamlIntelligenceResourcesFromFilesystem } from "../../../core/schem
 import { createTempContext } from "../../../core/temp.ts";
 import { copyExtensions } from "../../../extension/install.ts";
 import { kExtensionDir } from "../../../extension/extension-shared.ts";
+import { safeEnsureDirSync } from "../../../core/path.ts";
 
 const kRootTemplateName = "template.qmd";
 
@@ -129,7 +130,7 @@ async function stageTemplate(
 
     // Stages a remote file by downloading and unzipping it
     const archiveDir = join(workingDir, "archive");
-    ensureDirSync(archiveDir);
+    safeEnsureDirSync(archiveDir);
 
     // The filename
     const filename = (typeof (source.resolvedTarget) === "string"
@@ -233,7 +234,7 @@ async function promptForDirectory(root: string) {
       }
       const dir = join(root, input);
       if (!existsSync(dir)) {
-        ensureDirSync(dir);
+        safeEnsureDirSync(dir);
       }
 
       if (directoryEmpty(dir)) {

@@ -9,13 +9,13 @@
 
 import { dirname, join } from "path/mod.ts";
 import { copy } from "streams/conversion.ts";
-import { ensureDirSync } from "fs/mod.ts";
 
 import { createHash } from "hash/mod.ts";
 import { Tar } from "archive/tar.ts";
 
 import { PublishFiles } from "../provider.ts";
 import { TempContext } from "../../core/temp-types.ts";
+import { safeEnsureDirSync } from "../../core/path.ts";
 
 export async function createBundle(
   type: "site" | "document",
@@ -60,7 +60,7 @@ export async function createBundle(
     const filePath = join(files.baseDir, file);
     if (Deno.statSync(filePath).isFile) {
       const targetDir = join(stageDir, dirname(file));
-      ensureDirSync(targetDir);
+      safeEnsureDirSync(targetDir);
       Deno.copyFileSync(filePath, join(stageDir, file));
     }
   });

@@ -7,7 +7,6 @@
 
 // deno-lint-ignore-file camelcase
 
-import { ensureDirSync } from "fs/ensure_dir.ts";
 import { dirname, extname, join, relative } from "path/mod.ts";
 import { walkSync } from "fs/walk.ts";
 import * as colors from "fmt/colors.ts";
@@ -144,7 +143,7 @@ import { figuresDir, inputFilesDir } from "../render.ts";
 import { lines } from "../text.ts";
 import { readYamlFromMarkdown } from "../yaml.ts";
 import { languagesInMarkdown } from "../../execute/engine-shared.ts";
-import { pathWithForwardSlashes } from "../path.ts";
+import { pathWithForwardSlashes, safeEnsureDirSync } from "../path.ts";
 import { convertToHtmlSpans, hasAnsiEscapeCodes } from "../ansi-colors.ts";
 
 export const kJupyterNotebookExtensions = [
@@ -559,7 +558,7 @@ export function jupyterAssets(input: string, to?: string) {
   input = Deno.realPathSync(input);
   const files_dir = join(dirname(input), inputFilesDir(input));
   const figures_dir = join(files_dir, figuresDir(to));
-  ensureDirSync(figures_dir);
+  safeEnsureDirSync(figures_dir);
 
   // determine supporting_dir (if there are no other figures dirs then it's
   // the files dir, otherwise it's just the figures dir). note that
@@ -764,7 +763,7 @@ export function mdFromContentCell(
           const imageFile = options.assets.figures_dir +
             `/${cellId}-${index + 1}-${file}`;
           const outputFile = join(options.assets.base_dir, imageFile);
-          ensureDirSync(dirname(outputFile));
+          safeEnsureDirSync(dirname(outputFile));
           const data = attachment[mimeType];
           // get the data
           const imageText = Array.isArray(data)

@@ -6,16 +6,16 @@
 */
 
 import { dirname, join } from "path/mod.ts";
-import { ensureDirSync } from "fs/mod.ts";
+import { safeEnsureDirSync } from "../core/path.ts";
 
 export const kQuartoScratch = ".quarto";
 
 export function projectScratchPath(dir: string, path = "") {
   const scratchDir = join(dir, kQuartoScratch);
-  ensureDirSync(scratchDir);
+  safeEnsureDirSync(scratchDir);
   if (path) {
     path = join(scratchDir, path);
-    ensureDirSync(dirname(path));
+    safeEnsureDirSync(dirname(path));
     return path;
   } else {
     return Deno.realPathSync(scratchDir);

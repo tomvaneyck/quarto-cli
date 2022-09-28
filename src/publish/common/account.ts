@@ -5,7 +5,7 @@
 *
 */
 
-import { ensureDirSync, existsSync } from "fs/mod.ts";
+import { existsSync } from "fs/mod.ts";
 import { join } from "path/mod.ts";
 import { info } from "log/mod.ts";
 import * as colors from "fmt/colors.ts";
@@ -13,6 +13,7 @@ import { isServerSession, isWindows } from "../../core/platform.ts";
 import { openUrl } from "../../core/shell.ts";
 import { sleep } from "../../core/wait.ts";
 import { accountsDataDir } from "./data.ts";
+import { safeEnsureDirSync } from "../../core/path.ts";
 
 export interface AuthorizationHandler<Token, Ticket> {
   name: string;
@@ -129,6 +130,6 @@ export function writeAccessToken<T>(
 
 export function accessTokensPath(provider: string) {
   const dir = join(accountsDataDir(), provider);
-  ensureDirSync(dir);
+  safeEnsureDirSync(dir);
   return join(dir, "accounts.json");
 }

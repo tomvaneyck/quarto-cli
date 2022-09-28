@@ -11,7 +11,11 @@ import * as ld from "../../core/lodash.ts";
 
 import { Document, Element, NodeType } from "../../core/deno-dom.ts";
 
-import { pathWithForwardSlashes, safeExistsSync } from "../../core/path.ts";
+import {
+  pathWithForwardSlashes,
+  safeEnsureDirSync,
+  safeExistsSync,
+} from "../../core/path.ts";
 
 import {
   DependencyFile,
@@ -31,7 +35,6 @@ import {
 } from "./pandoc-dependencies.ts";
 import { fixupCssReferences, isCssFile } from "../../core/css.ts";
 
-import { ensureDirSync } from "fs/mod.ts";
 import { ProjectContext } from "../../project/types.ts";
 import { projectOutputDir } from "../../project/project-shared.ts";
 import { insecureHash } from "../../core/hash.ts";
@@ -315,7 +318,7 @@ function processHtmlDependencies(
 
         // Ensure the directory exists and copy the source file
         // to the destination
-        ensureDirSync(destinationDir);
+        safeEnsureDirSync(destinationDir);
         copyFileIfNewer(
           serviceWorker.source,
           destinationFile,
@@ -358,7 +361,7 @@ function copyDependencyFile(
   const targetPath = join(targetDir, file.name);
   // If this is a user resource, treat it as a resource (resource ref discovery)
   // if this something that we're injecting, just copy it
-  ensureDirSync(dirname(targetPath));
+  safeEnsureDirSync(dirname(targetPath));
   copyFileIfNewer(file.path, targetPath);
 
   if (external && isCssFile(file.path)) {

@@ -7,7 +7,7 @@
 
 import { info } from "log/mod.ts";
 import * as colors from "fmt/colors.ts";
-import { ensureDirSync, walkSync } from "fs/mod.ts";
+import { walkSync } from "fs/mod.ts";
 
 import { Input } from "cliffy/prompt/input.ts";
 import { Select } from "cliffy/prompt/select.ts";
@@ -18,7 +18,7 @@ import { crypto } from "crypto/mod.ts";
 import { encode as hexEncode } from "encoding/hex.ts";
 
 import { sleep } from "../../core/wait.ts";
-import { pathWithForwardSlashes } from "../../core/path.ts";
+import { pathWithForwardSlashes, safeEnsureDirSync } from "../../core/path.ts";
 import { completeMessage, withSpinner } from "../../core/console.ts";
 import { fileProgress } from "../../core/progress.ts";
 
@@ -275,7 +275,7 @@ function stageDocumentPublish(title: string, publishFiles: PublishFiles) {
   for (const file of publishFiles.files) {
     const src = join(publishFiles.baseDir, file);
     const target = join(stagedFiles.baseDir, file);
-    ensureDirSync(dirname(target));
+    safeEnsureDirSync(dirname(target));
     copyTo(src, target);
   }
 
@@ -296,7 +296,7 @@ function stageDocumentPublish(title: string, publishFiles: PublishFiles) {
     for (const walk of walkSync(src)) {
       if (walk.isFile) {
         const destFile = join(dest, relative(src, walk.path));
-        ensureDirSync(dirname(destFile));
+        safeEnsureDirSync(dirname(destFile));
         copyTo(walk.path, destFile);
         stagedFiles.files.push(relative(stagedFiles.baseDir, destFile));
       }

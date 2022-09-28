@@ -9,7 +9,7 @@ import { warning } from "log/mod.ts";
 import { existsSync } from "fs/exists.ts";
 import { basename, join } from "path/mod.ts";
 
-import { expandPath, which } from "../../core/path.ts";
+import { expandPath, safeEnsureDirSync, which } from "../../core/path.ts";
 import { unzip } from "../../core/zip.ts";
 import {
   hasTexLive,
@@ -31,8 +31,6 @@ import { getLatestRelease } from "../github.ts";
 import { hasTinyTex, tinyTexInstallDir } from "./tinytex-info.ts";
 import { copyTo } from "../../core/copy.ts";
 import { getenv, suggestUserBinPaths } from "../../core/env.ts";
-
-import { ensureDirSync } from "fs/mod.ts";
 
 // This the https texlive repo that we use by default
 const kDefaultRepos = [
@@ -308,7 +306,7 @@ This will instruct TeX Live to create symlinks that it needs in <bin_dir_on_path
           // Find bin paths on this machine
           // Ensure the directory exists
           const expandedPath = expandPath(path);
-          ensureDirSync(expandedPath);
+          safeEnsureDirSync(expandedPath);
 
           // Set the sys_bin for texlive
           await exec(
