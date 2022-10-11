@@ -1320,6 +1320,17 @@ local function scriptFileName()
    end
 end
 
+-- patch require to look in current scriptDir
+local orig_require = require
+function require(modname)
+   local dir = pandoc.path.join({scriptDir(), '?.lua'})
+   package.path = package.path .. ';' ..dir
+   local mod = orig_require(modname)
+   package.path = package.path:sub(1, #package.path - (#dir + 1))
+   return mod
+end
+
+
 -- resolves a path, providing either the original path
 -- or if relative, a path that is based upon the 
 -- script location
@@ -1339,7 +1350,6 @@ local function resolvePathExt(path)
     return path
   end
 end
-
 -- converts the friendly Quartio location names 
 -- in the pandoc location
 local function resolveLocation(location) 
@@ -1616,33 +1626,23 @@ function param(name, default)
 end
 
 local function projectDirectory() 
-   -- the offset to the project
-   local projectOffset = _quarto.projectOffset()
-   if projectOffset then
-      -- get the current working directory - we always change
-      -- the working directory to the input file when we render
-      local wd = pandoc.system.get_working_directory()
-      
-      -- process the offset, adjusting the working directory
-      local projectDir = wd
-      for i, v in ipairs(pandoc.path.split(projectOffset)) do
-         if v == '.' then
-            -- no op
-         elseif v == '..' then
-            projectDir = pandoc.path.directory(projectDir)
-         else
-            projectDir = pandoc.path.join({projectDir, v})
-         end
-      end
-      return projectDir
+   return os.getenv("QUARTO_PROJECT_DIR")
+end
+
+local function projectOutputDirectory()
+   local outputDir = param("project-output-dir", "")
+   local projectDir = projectDirectory()
+   if projectDir then
+      return pandoc.path.join({projectDir, outputDir})
    else
       return nil
-   end 
+   end
 end
 
 -- Provides the project relative path to the current input
 -- if this render is in the context of a project
 local function projectRelativeOutputFile()
+   
    -- the project directory
    local projDir = projectDirectory()
 
@@ -1660,6 +1660,49 @@ local function projectRelativeOutputFile()
    end
 end
 
+local function inputFile()
+   local source = param("quarto-source", "")
+   if pandoc.path.is_absolute(source) then 
+      return source
+   else
+      local projectDir = projectDirectory()
+      if projectDir then
+         return pandoc.path.join({projectDir, param("quarto-source", "")})
+      else
+         return pandoc.path.join({pandoc.system.get_working_directory(), param("quarto-source", "")})
+      end   
+   end
+end
+
+local function outputFile() 
+   local projectOutDir = projectOutputDirectory()
+   if projectOutDir then
+      local projectDir = projectDirectory()
+      if projectDir then
+         local input = pandoc.path.directory(inputFile())
+         local relativeDir = pandoc.path.make_relative(input, projectDir)
+         if relativeDir and relativeDir ~= '.' then
+            return pandoc.path.join({projectOutDir, relativeDir, PANDOC_STATE['output_file']})
+         end
+      end
+      return pandoc.path.join({projectOutDir, PANDOC_STATE['output_file']})
+   else
+      return pandoc.path.join({pandoc.system.get_working_directory(), PANDOC_STATE['output_file']})
+   end
+end
+
+local function version() 
+   return param('quarto-version', 'unknown')
+end
+
+local function projectProfiles()
+   return param('quarto_profile', {})
+end
+
+local function projectOffset() 
+   return param('project-offset', nil)
+end
+
 -- Quarto internal module - makes functions available
 -- through the filters
 _quarto = {
@@ -1674,17 +1717,14 @@ _quarto = {
    scriptFile = function(file)
       scriptFile = file
    end,
-   projectOffset = function()
-      return param('project-offset', nil)
-   end
+   projectOffset = projectOffset
 
  } 
-
 
 -- The main exports of the quarto module
 quarto = {
   doc = {
-    addHtmlDependency = function(htmlDependency)
+    add_html_dependency = function(htmlDependency)
    
       -- validate the dependency
       if htmlDependency.name == nil then 
@@ -1743,7 +1783,7 @@ quarto = {
       }))
     end,
 
-    attachToDependency = function(name, pathOrFileObj)
+    attach_to_dependency = function(name, pathOrFileObj)
 
       if name == nil then
          error("The target dependency name for an attachment cannot be nil. Please provide a valid dependency name.")
@@ -1784,46 +1824,67 @@ quarto = {
       }))
     end,
   
-    useLatexPackage = function(package, options)
+    use_latex_package = function(package, options)
       writeToDependencyFile(dependency("usepackage", {package = package, options = options }))
     end,
 
-    addFormatResource = function(path)
+    add_format_resource = function(path)
       writeToDependencyFile(dependency("format-resources", { file = resolvePathExt(path)}))
     end,
 
-    includeText = function(location, text)
+    include_text = function(location, text)
       writeToDependencyFile(dependency("text", { text = text, location = resolveLocation(location)}))
     end,
   
-    includeFile = function(location, path)
+    include_file = function(location, path)
       writeToDependencyFile(dependency("file", { path = resolvePathExt(path), location = resolveLocation(location)}))
     end,
 
-    isFormat = format.isFormat,
+    is_format = format.isFormat,
 
-    citeMethod = function() 
+    cite_method = function() 
       local citeMethod = param('cite-method', 'citeproc')
       return citeMethod
     end,
-    pdfEngine = function() 
+    pdf_engine = function() 
       local engine = param('pdf-engine', 'pdflatex')
       return engine      
     end,
-    hasBootstrap = function() 
+    has_bootstrap = function() 
       local hasBootstrap = param('has-bootstrap', false)
       return hasBootstrap
     end,
-    project_output_file = projectRelativeOutputFile
+    output_file = outputFile(),
+    input_file = inputFile()
   },
   project = {
-   directory = projectDirectory
+   directory = projectDirectory(),
+   offset = projectOffset(),
+   profile = pandoc.List(projectProfiles()),
+   output_directory = projectOutputDirectory()
   },
   utils = {
    dump = utils.dump,
-   resolvePath = resolvePathExt
+   resolve_path = resolvePathExt
   },
   json = json,
   base64 = base64,
-  log = logging
+  log = logging,
+  version = version()
 }
+
+-- alias old names for backwards compatibility
+quarto.doc.addHtmlDependency = quarto.doc.add_html_dependency
+quarto.doc.attachToDependency = quarto.doc.attach_to_dependency
+quarto.doc.useLatexPackage = quarto.doc.use_latex_package
+quarto.doc.addFormatResource = quarto.doc.add_format_resource
+quarto.doc.includeText = quarto.doc.include_text
+quarto.doc.includeFile = quarto.doc.include_file
+quarto.doc.isFormat = quarto.doc.is_format
+quarto.doc.citeMethod = quarto.doc.cite_method
+quarto.doc.pdfEngine = quarto.doc.pdf_engine
+quarto.doc.hasBootstrap = quarto.doc.has_bootstrap
+quarto.doc.project_output_file = projectRelativeOutputFile
+quarto.utils.resolvePath = quarto.utils.resolve_path
+
+

@@ -7560,7 +7560,7 @@ try {
             },
             description: {
               short: "Width of plot in the output document",
-              long: "Width of the plot in the output document, which can be different from its physical `fig-width`,\ni.e., plots can be scaled in the output document.\nDepending on the output format, this option can take special values.\nFor example, for LaTeX output, it can be `.8\\\\linewidth`, `3in`, or `8cm`;\nfor HTML, it can be `300px` or `50%`.\n"
+              long: "Width of the plot in the output document, which can be different from its physical `fig-width`,\ni.e., plots can be scaled in the output document.\nWhen used without a unit, the unit is assumed to be pixels. However, any of the following unit \nidentifiers can be used: px, cm, mm, in, inch and %, for example, `3in`, `8cm`, `300px` or `50%`.\n"
             }
           },
           {
@@ -8821,6 +8821,12 @@ try {
                     description: "Hostname to bind to (defaults to 127.0.0.1)"
                   }
                 },
+                serve: {
+                  description: "Use an exernal application to preview the project.",
+                  schema: {
+                    ref: "project-serve"
+                  }
+                },
                 browser: {
                   boolean: {
                     description: "Open a web browser to view the preview (defaults to true)"
@@ -8842,6 +8848,38 @@ try {
                   }
                 }
               }
+            }
+          },
+          {
+            id: "project-serve",
+            object: {
+              closed: true,
+              properties: {
+                cmd: {
+                  string: {
+                    description: "Serve project preview using the specified command.\nInterpolate the `--port` into the command using `{port}`.\n"
+                  }
+                },
+                args: {
+                  string: {
+                    description: "Additional command line arguments for preview command."
+                  }
+                },
+                env: {
+                  object: {
+                    description: "Environment variables to set for preview command."
+                  }
+                },
+                ready: {
+                  string: {
+                    description: "Regular expression for detecting when the server is ready."
+                  }
+                }
+              },
+              required: [
+                "cmd",
+                "ready"
+              ]
             }
           },
           {
@@ -10950,6 +10988,18 @@ try {
             description: "Document date"
           },
           {
+            name: "date-modified",
+            tags: {
+              formats: [
+                "$html-doc"
+              ]
+            },
+            schema: {
+              ref: "date"
+            },
+            description: "Document date modified"
+          },
+          {
             name: "author",
             schema: {
               maybeArrayOf: {
@@ -11504,228 +11554,237 @@ try {
             name: "crossref",
             description: "Configuration for crossref labels and prefixes.",
             schema: {
-              object: {
-                closed: true,
-                properties: {
-                  chapters: {
-                    boolean: {
-                      description: "Use top level sections (H1) in this document as chapters.",
-                      default: false
-                    }
-                  },
-                  "title-delim": {
-                    string: {
-                      description: "The delimiter used between the prefix and the caption."
-                    }
-                  },
-                  "fig-title": {
-                    string: {
-                      description: "The title prefix used for figure captions."
-                    }
-                  },
-                  "tbl-title": {
-                    string: {
-                      description: "The title prefix used for table captions."
-                    }
-                  },
-                  "eq-title": {
-                    string: {
-                      description: "The title prefix used for equation captions."
-                    }
-                  },
-                  "lst-title": {
-                    string: {
-                      description: "The title prefix used for listing captions."
-                    }
-                  },
-                  "thm-title": {
-                    string: {
-                      description: "The title prefix used for theorem captions."
-                    }
-                  },
-                  "lem-title": {
-                    string: {
-                      description: "The title prefix used for lemma captions."
-                    }
-                  },
-                  "cor-title": {
-                    string: {
-                      description: "The title prefix used for corollary captions."
-                    }
-                  },
-                  "prp-title": {
-                    string: {
-                      description: "The title prefix used for proposition captions."
-                    }
-                  },
-                  "cnj-title": {
-                    string: {
-                      description: "The title prefix used for conjecture captions."
-                    }
-                  },
-                  "def-title": {
-                    string: {
-                      description: "The title prefix used for definition captions."
-                    }
-                  },
-                  "exm-title": {
-                    string: {
-                      description: "The title prefix used for example captions."
-                    }
-                  },
-                  "exr-title": {
-                    string: {
-                      description: "The title prefix used for exercise captions."
-                    }
-                  },
-                  "fig-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to a figure."
-                    }
-                  },
-                  "tbl-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to a table."
-                    }
-                  },
-                  "eq-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to an equation."
-                    }
-                  },
-                  "sec-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to a section."
-                    }
-                  },
-                  "lst-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to a listing."
-                    }
-                  },
-                  "thm-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to a theorem."
-                    }
-                  },
-                  "lem-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to a lemma."
-                    }
-                  },
-                  "cor-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to a corollary."
-                    }
-                  },
-                  "prp-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to a proposition."
-                    }
-                  },
-                  "cnj-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to a conjecture."
-                    }
-                  },
-                  "def-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to a definition."
-                    }
-                  },
-                  "exm-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to an example."
-                    }
-                  },
-                  "exr-prefix": {
-                    string: {
-                      description: "The prefix used for an inline reference to an exercise."
-                    }
-                  },
-                  "fig-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for figures."
-                  },
-                  "tbl-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for tables."
-                  },
-                  "eq-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for equations."
-                  },
-                  "sec-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for sections."
-                  },
-                  "lst-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for listings."
-                  },
-                  "thm-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for theorems."
-                  },
-                  "lem-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for lemmas."
-                  },
-                  "cor-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for corollaries."
-                  },
-                  "prp-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for propositions."
-                  },
-                  "cnj-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for conjectures."
-                  },
-                  "def-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for definitions."
-                  },
-                  "exm-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for examples."
-                  },
-                  "exr-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The numbering scheme used for exercises."
-                  },
-                  "lof-title": {
-                    string: {
-                      description: "The title used for the list of figures."
-                    }
-                  },
-                  "lot-title": {
-                    string: {
-                      description: "The title used for the list of tables."
-                    }
-                  },
-                  "lol-title": {
-                    string: {
-                      description: "The title used for the list of listings."
-                    }
-                  },
-                  labels: {
-                    ref: "crossref-labels-schema",
-                    description: "The number scheme used for references."
-                  },
-                  "subref-labels": {
-                    ref: "crossref-labels-schema",
-                    description: "The number scheme used for sub references."
-                  },
-                  "ref-hyperlink": {
-                    boolean: {
-                      default: true,
-                      description: "Whether cross references should be hyper-linked."
+              anyOf: [
+                {
+                  enum: [
+                    false
+                  ]
+                },
+                {
+                  object: {
+                    closed: true,
+                    properties: {
+                      chapters: {
+                        boolean: {
+                          description: "Use top level sections (H1) in this document as chapters.",
+                          default: false
+                        }
+                      },
+                      "title-delim": {
+                        string: {
+                          description: "The delimiter used between the prefix and the caption."
+                        }
+                      },
+                      "fig-title": {
+                        string: {
+                          description: "The title prefix used for figure captions."
+                        }
+                      },
+                      "tbl-title": {
+                        string: {
+                          description: "The title prefix used for table captions."
+                        }
+                      },
+                      "eq-title": {
+                        string: {
+                          description: "The title prefix used for equation captions."
+                        }
+                      },
+                      "lst-title": {
+                        string: {
+                          description: "The title prefix used for listing captions."
+                        }
+                      },
+                      "thm-title": {
+                        string: {
+                          description: "The title prefix used for theorem captions."
+                        }
+                      },
+                      "lem-title": {
+                        string: {
+                          description: "The title prefix used for lemma captions."
+                        }
+                      },
+                      "cor-title": {
+                        string: {
+                          description: "The title prefix used for corollary captions."
+                        }
+                      },
+                      "prp-title": {
+                        string: {
+                          description: "The title prefix used for proposition captions."
+                        }
+                      },
+                      "cnj-title": {
+                        string: {
+                          description: "The title prefix used for conjecture captions."
+                        }
+                      },
+                      "def-title": {
+                        string: {
+                          description: "The title prefix used for definition captions."
+                        }
+                      },
+                      "exm-title": {
+                        string: {
+                          description: "The title prefix used for example captions."
+                        }
+                      },
+                      "exr-title": {
+                        string: {
+                          description: "The title prefix used for exercise captions."
+                        }
+                      },
+                      "fig-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to a figure."
+                        }
+                      },
+                      "tbl-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to a table."
+                        }
+                      },
+                      "eq-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to an equation."
+                        }
+                      },
+                      "sec-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to a section."
+                        }
+                      },
+                      "lst-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to a listing."
+                        }
+                      },
+                      "thm-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to a theorem."
+                        }
+                      },
+                      "lem-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to a lemma."
+                        }
+                      },
+                      "cor-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to a corollary."
+                        }
+                      },
+                      "prp-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to a proposition."
+                        }
+                      },
+                      "cnj-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to a conjecture."
+                        }
+                      },
+                      "def-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to a definition."
+                        }
+                      },
+                      "exm-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to an example."
+                        }
+                      },
+                      "exr-prefix": {
+                        string: {
+                          description: "The prefix used for an inline reference to an exercise."
+                        }
+                      },
+                      "fig-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for figures."
+                      },
+                      "tbl-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for tables."
+                      },
+                      "eq-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for equations."
+                      },
+                      "sec-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for sections."
+                      },
+                      "lst-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for listings."
+                      },
+                      "thm-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for theorems."
+                      },
+                      "lem-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for lemmas."
+                      },
+                      "cor-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for corollaries."
+                      },
+                      "prp-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for propositions."
+                      },
+                      "cnj-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for conjectures."
+                      },
+                      "def-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for definitions."
+                      },
+                      "exm-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for examples."
+                      },
+                      "exr-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The numbering scheme used for exercises."
+                      },
+                      "lof-title": {
+                        string: {
+                          description: "The title used for the list of figures."
+                        }
+                      },
+                      "lot-title": {
+                        string: {
+                          description: "The title used for the list of tables."
+                        }
+                      },
+                      "lol-title": {
+                        string: {
+                          description: "The title used for the list of listings."
+                        }
+                      },
+                      labels: {
+                        ref: "crossref-labels-schema",
+                        description: "The number scheme used for references."
+                      },
+                      "subref-labels": {
+                        ref: "crossref-labels-schema",
+                        description: "The number scheme used for sub references."
+                      },
+                      "ref-hyperlink": {
+                        boolean: {
+                          default: true,
+                          description: "Whether cross references should be hyper-linked."
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             }
           }
         ],
@@ -12954,7 +13013,7 @@ try {
             hidden: true,
             description: {
               short: "Generate HTML output (if necessary) even when targeting markdown.",
-              long: "Generate HTML output (if necessary) even when targeting markdown. Enables the \nembedding of more sophisticated output (e.g. Jupyter widgets) in markdown.\nNote that this option is set to `true` for the `hugo` format.\n"
+              long: "Generate HTML output (if necessary) even when targeting markdown. Enables the \nembedding of more sophisticated output (e.g. Jupyter widgets) in markdown.\n"
             }
           },
           {
@@ -13318,6 +13377,19 @@ try {
             },
             schema: "boolean",
             description: "Set to `false` to prevent an installation of TinyTex from being used to compile PDF documents."
+          },
+          {
+            name: "latex-input-paths",
+            tags: {
+              formats: [
+                "pdf",
+                "beamer"
+              ]
+            },
+            schema: {
+              arrayOf: "string"
+            },
+            description: "Array of paths LaTeX should search for inputs."
           }
         ],
         "schema/document-layout.yml": [
@@ -14118,8 +14190,7 @@ try {
               formats: [
                 "$html-doc",
                 "$epub-all",
-                "gfm",
-                "hugo"
+                "gfm"
               ]
             },
             schema: {
@@ -16325,7 +16396,7 @@ try {
               "commonmark",
               "commonmark_x",
               "markua",
-              "hugo"
+              "md"
             ],
             "office-all": [
               "docx",
@@ -16438,7 +16509,7 @@ try {
               "textile",
               "xwiki",
               "zimwiki",
-              "hugo"
+              "md"
             ]
           }
         },
@@ -16661,6 +16732,15 @@ try {
                     schema: {
                       maybeArrayOf: "string"
                     }
+                  },
+                  detect: {
+                    description: "Array of paths used to detect the project type within a directory",
+                    schema: {
+                      arrayOf: {
+                        arrayOf: "string"
+                      }
+                    },
+                    hidden: true
                   }
                 }
               }
@@ -17418,10 +17498,15 @@ try {
           "Image height (pixels)",
           "Port to listen on (defaults to random value between 3000 and\n8000)",
           "Hostname to bind to (defaults to 127.0.0.1)",
+          "Use an exernal application to preview the project.",
           "Open a web browser to view the preview (defaults to true)",
           "Re-render input files when they change (defaults to true)",
           "Navigate the browser automatically when outputs are updated (defaults\nto true)",
           "Time (in seconds) after which to exit if there are no active\nclients",
+          "Serve project preview using the specified command. Interpolate the\n<code>--port</code> into the command using <code>{port}</code>.",
+          "Additional command line arguments for preview command.",
+          "Environment variables to set for preview command.",
+          "Regular expression for detecting when the server is ready.",
           "Sites published from project",
           "Unique identifier for site",
           "Published URL for site",
@@ -18130,7 +18215,7 @@ try {
           "The aspect ratio of the plot, i.e., the ratio of height/width. When\n<code>fig-asp</code> is specified, the height of a plot (the option\n<code>fig-height</code>) is calculated from\n<code>fig-width * fig-asp</code>.",
           {
             short: "Width of plot in the output document",
-            long: "Width of the plot in the output document, which can be different from\nits physical <code>fig-width</code>, i.e., plots can be scaled in the\noutput document. Depending on the output format, this option can take\nspecial values. For example, for LaTeX output, it can be\n<code>.8\\\\linewidth</code>, <code>3in</code>, or <code>8cm</code>; for\nHTML, it can be <code>300px</code> or <code>50%</code>."
+            long: "Width of the plot in the output document, which can be different from\nits physical <code>fig-width</code>, i.e., plots can be scaled in the\noutput document. When used without a unit, the unit is assumed to be\npixels. However, any of the following unit identifiers can be used: px,\ncm, mm, in, inch and %, for example, <code>3in</code>, <code>8cm</code>,\n<code>300px</code> or <code>50%</code>."
           },
           {
             short: "Height of plot in the output document",
@@ -18225,6 +18310,7 @@ try {
           "Document title",
           "Identifies the subtitle of the document.",
           "Document date",
+          "Document date modified",
           "Author or authors of the document",
           {
             short: "The list of organizations with which contributors are affiliated.",
@@ -18568,7 +18654,7 @@ try {
           "Keep hidden source code and output (marked with class\n<code>.hidden</code>)",
           {
             short: "Generate HTML output (if necessary) even when targeting markdown.",
-            long: "Generate HTML output (if necessary) even when targeting markdown.\nEnables the embedding of more sophisticated output (e.g.&nbsp;Jupyter\nwidgets) in markdown. Note that this option is set to <code>true</code>\nfor the <code>hugo</code> format."
+            long: "Generate HTML output (if necessary) even when targeting markdown.\nEnables the embedding of more sophisticated output (e.g.&nbsp;Jupyter\nwidgets) in markdown."
           },
           "Indicates that computational output should not be written within\ndivs. This is necessary for some formats (e.g.&nbsp;<code>pptx</code>) to\nproperly layout figures.",
           "Disable merging of string based and file based includes (some\nformats, specifically ePub, do not correctly handle this merging)",
@@ -18620,6 +18706,7 @@ try {
           "Array of command line options for <code>tlmgr</code>.",
           "Output directory for intermediates and PDF.",
           "Set to <code>false</code> to prevent an installation of TinyTex from\nbeing used to compile PDF documents.",
+          "Array of paths LaTeX should search for inputs.",
           "The document class.",
           {
             short: "Options for the document class,",
@@ -19093,6 +19180,7 @@ try {
           "Options for <code>quarto preview</code>",
           "Scripts to run as a pre-render step",
           "Scripts to run as a post-render step",
+          "Array of paths used to detect the project type within a directory",
           "Website configuration.",
           "Book configuration.",
           "The primary title of the item.",
@@ -19397,6 +19485,7 @@ try {
           "Options for <code>quarto preview</code>",
           "Scripts to run as a pre-render step",
           "Scripts to run as a post-render step",
+          "Array of paths used to detect the project type within a directory",
           "Website configuration.",
           "Book configuration.",
           "The primary title of the item.",
@@ -19899,12 +19988,12 @@ try {
           mermaid: "%%"
         },
         "handlers/mermaid/schema.yml": {
-          _internalId: 129364,
+          _internalId: 132274,
           type: "object",
           description: "be an object",
           properties: {
             "mermaid-format": {
-              _internalId: 129363,
+              _internalId: 132273,
               type: "enum",
               enum: [
                 "png",
@@ -26454,6 +26543,16 @@ ${reindented}
   }
 
   // annotated-yaml.ts
+  function postProcessAnnotation(parse) {
+    if (parse.components.length === 1 && parse.start === parse.components[0].start && parse.end === parse.components[0].end) {
+      return postProcessAnnotation(parse.components[0]);
+    } else {
+      return {
+        ...parse,
+        components: parse.components.map(postProcessAnnotation)
+      };
+    }
+  }
   function jsYamlParseLenient(yml) {
     try {
       return load(yml, { schema: QuartoJSONSchema });
@@ -26461,12 +26560,14 @@ ${reindented}
       return yml;
     }
   }
-  function readAnnotatedYamlFromMappedString(mappedSource2) {
-    const parser = getTreeSitterSync();
-    const tree = parser.parse(mappedSource2.value);
-    const treeSitterAnnotation = buildTreeSitterAnnotation(tree, mappedSource2);
-    if (treeSitterAnnotation) {
-      return treeSitterAnnotation;
+  function readAnnotatedYamlFromMappedString(mappedSource2, lenient = false) {
+    if (lenient) {
+      const parser = getTreeSitterSync();
+      const tree = parser.parse(mappedSource2.value);
+      const treeSitterAnnotation = buildTreeSitterAnnotation(tree, mappedSource2);
+      if (treeSitterAnnotation) {
+        return treeSitterAnnotation;
+      }
     }
     try {
       return buildJsYamlAnnotation(mappedSource2);
@@ -26567,7 +26668,7 @@ ${tidyverseInfo(
       );
     }
     JSON.stringify(results[0]);
-    return results[0];
+    return postProcessAnnotation(results[0]);
   }
   function buildTreeSitterAnnotation(tree, mappedSource2) {
     const errors = [];
@@ -27312,7 +27413,7 @@ ${tidyverseInfo(
     const objResult = value.result;
     const locate = (key, keyOrValue = "value") => {
       for (let i = 0; i < value.components.length; i += 2) {
-        if (value.components[i].result === key) {
+        if (String(value.components[i].result) === key) {
           if (keyOrValue === "value") {
             return value.components[i + 1];
           } else {
@@ -28119,8 +28220,11 @@ ${tidyverseInfo(
     const type2 = typeof value;
     return value !== null && (type2 === "object" || type2 === "function");
   };
-  async function readAndValidateYamlFromMappedString(mappedYaml, schema2, pruneErrors = true) {
-    const annotation = await readAnnotatedYamlFromMappedString(mappedYaml);
+  async function readAndValidateYamlFromMappedString(mappedYaml, schema2, pruneErrors = true, lenient = false) {
+    const annotation = await readAnnotatedYamlFromMappedString(
+      mappedYaml,
+      lenient
+    );
     if (annotation === null) {
       throw new Error("Parse error in readAnnotatedYamlFromMappedString");
     }
@@ -28769,7 +28873,7 @@ ${tidyverseInfo(
     }
     return mappedString(source, params);
   }
-  async function parseAndValidateCellOptions(mappedYaml, language, validate2 = false, engine = "") {
+  async function parseAndValidateCellOptions(mappedYaml, language, validate2 = false, engine = "", lenient = false) {
     if (mappedYaml.value.trim().length === 0) {
       return void 0;
     }
@@ -28788,11 +28892,13 @@ ${tidyverseInfo(
       }
     }
     if (schema2 === void 0 || !validate2) {
-      return readAnnotatedYamlFromMappedString(mappedYaml).result;
+      return readAnnotatedYamlFromMappedString(mappedYaml, lenient).result;
     }
     const { yaml, yamlValidationErrors } = await readAndValidateYamlFromMappedString(
       mappedYaml,
-      schema2
+      schema2,
+      void 0,
+      lenient
     );
     if (yamlValidationErrors.length > 0) {
       throw new ValidationError2(
@@ -28847,7 +28953,7 @@ ${tidyverseInfo(
       sourceStartLine: yamlLines.length
     };
   }
-  async function partitionCellOptionsMapped(language, outerSource, validate2 = false, engine = "") {
+  async function partitionCellOptionsMapped(language, outerSource, validate2 = false, engine = "", lenient = false) {
     const {
       yaml: mappedYaml,
       optionsSource,
@@ -28859,7 +28965,8 @@ ${tidyverseInfo(
         mappedYaml || asMappedString(""),
         language,
         validate2,
-        engine
+        engine,
+        lenient
       );
       return {
         yaml,
@@ -28969,7 +29076,7 @@ ${tidyverseInfo(
   }
 
   // ../break-quarto-md.ts
-  async function breakQuartoMd(src, validate2 = false) {
+  async function breakQuartoMd(src, validate2 = false, lenient = false) {
     if (typeof src === "string") {
       src = asMappedString(src);
     }
@@ -29021,7 +29128,9 @@ ${tidyverseInfo(
           const { yaml, sourceStartLine } = await partitionCellOptionsMapped(
             language,
             cell.source,
-            validate2
+            validate2,
+            "",
+            lenient
           );
           const breaks = Array.from(lineOffsets(cell.source.value));
           let strUpToLastBreak = "";
@@ -29196,6 +29305,7 @@ ${tidyverseInfo(
       return { name: format, hidden };
     };
     const formatSchemaDescriptorList = (await pandocFormatsResource()).concat(
+      "md",
       "hugo"
     ).map(
       (format) => {
@@ -29887,7 +29997,11 @@ ${tidyverseInfo(
       position,
       line
     } = context;
-    const result = await breakQuartoMd(asMappedString(context.code));
+    const result = await breakQuartoMd(
+      asMappedString(context.code),
+      void 0,
+      true
+    );
     const adjustedCellSize = (cell) => {
       const cellLines = lines(cell.source.value);
       let size = cellLines.length;
